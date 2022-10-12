@@ -42,6 +42,58 @@ def compute_gradient(y, tx, w):
     gradient = -1/N*np.matmul(np.transpose(tx), e)
     return gradient.reshape((1,len(gradient)))[0]
 
+def sigmoid(x):
+    """
+    Computes the sigmoid (logistic function) of a real-valued scalar
+    Args:
+        x: numpy array of shape=(N, )
+
+    Returns:
+        sgmd(x): numpy array of shape=(N, ). ith entry = sigmoid(x[i])
+    """
+    return 1/(1+np.exp(-x))
+
+def compute_log_loss(y, tx, w, lambda_=0):
+    """Calculate the log loss + L2 norm regularization term
+
+    Args:
+        y: shape=(N, )
+        tx: shape=(N,M)
+        w: shape=(M,). The vector of model parameters.
+        lambda_: hyperparameter for regularization
+
+    Returns:
+        loss: the value of the loss (a scalar), corresponding to the input parameters w.
+    """
+    N = len(y)
+    # compute the predictions vector (shape (N,)) with probabilities P(y=1|x)
+    prediction = sigmoid(np.ravel(np.dot(tx, w.reshape((len(w),1)))))
+    # compute the log loss
+    loss_vector = -y*np.log(prediction) - (np.ones(N)-y)*np.log(np.ones(N)-prediction)
+    loss = 1/N * np.sum(loss_vector) + lambda_*np.norm(w, 2)**2
+    return loss
+
+def compute_gradient_log_loss(y, tx, w, lambda_=0):
+    """Computes the gradient at w for a linear model with log loss cost function and L2 regularization.
+
+    Args:
+        y: shape=(N, )
+        tx: shape=(N,M)
+        w: shape=(M, ). The vector of model parameters.
+        lambda_: hyperparameter for regularization
+
+    Returns:
+        An array of shape (M, ) (same shape as w), containing the gradient of the loss at w.
+    """
+    N = len(y)
+    # compute the predictions vector (shape (N,)) with probabilities P(y=1|x)
+    prediction = sigmoid(np.ravel(np.dot(tx, w.reshape((len(w),1)))))
+    # compute the gradient of the log loss
+    grad_log_loss = 1/N * np.dot(tx.T, prediction-y)
+    # add the gradient of the regularization term
+    grad = grad_log_loss + 2*lambda_*w
+    return grad
+
 
 ##########################
 ### REQUIRED FUNCTIONS ###
