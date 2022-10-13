@@ -98,7 +98,7 @@ def compute_gradient_log_loss(y, tx, w, lambda_=0):
 ##########################
 ### REQUIRED FUNCTIONS ###
 ##########################
-def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
+def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
     """The Gradient Descent (GD) algorithm for a linear model using the MSE loss funtion.
 
     Args:
@@ -121,7 +121,7 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
     loss = compute_MSE_loss(y, tx, w)
     return w, loss
 
-def least_squares_SGD(y, tx, initial_w, max_iters, gamma, batch_size=32):
+def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma, batch_size=32):
     """The Stochastic Gradient Descent algorithm (SGD) for a linear model using the MSE loss funtion.
 
     Args:
@@ -193,4 +193,67 @@ def ridge_regression(y, tx, lambda_):
     w_ridge = np.matmul(A_inverse, np.matmul(np.transpose(tx), y.reshape((N, 1))))
     w = w_ridge.reshape((1, D))[0]
     loss = compute_MSE_loss(y, tx, w) + lambda_*np.linalg.norm(w, 2)**2
+    return w, loss
+
+def logistic_regression(y, tx, initial w, max iters, gamma):
+    """logistic regression using SGD
+
+    Args:
+        y: shape=(N, )
+        tx: shape=(N,M)
+        initial_w: shape=(M, ). The initial guess (or the initialization) for the model parameters
+        max_iters: a scalar denoting the total number of iterations of GD
+        gamma: a scalar denoting the stepsize
+
+    Returns:
+        w: the model parameters for the last iteration of GD
+        loss: the loss value (scalar) for the last iteration of GD
+    """
+    w = initial_w
+    N = len(y)
+    batch_size = 32
+    for n_iter in range(max_iters):
+        # choose batch_size data points
+        data_points = np.random.randint(0, N, size=batch_size)
+        # pick out the datapoints
+        x_batch = tx[data_points]
+        y_batch = y[data_points]
+        # compute stochastic gradient
+        stochastic_gradient = compute_gradient_log_loss(y_batch, x_batch, w)
+        # update w by gradient
+        w = w-(gamma*stochastic_gradient)
+    # compute log loss
+    loss = compute_log_loss(y, tx, w)
+    return w, loss
+
+def reg_logistic_regression(y, tx, lambda_ , initial w, max iters, gamma):
+    """logistic regression with regularization term using SGD
+
+    Args:
+        y: shape=(N, )
+        tx: shape=(N,M)
+        lambda_: hyperparameter for the regularization term
+        initial_w: shape=(M, ). The initial guess (or the initialization) for the model parameters
+        max_iters: a scalar denoting the total number of iterations of GD
+        gamma: a scalar denoting the stepsize
+
+    Returns:
+        w: the model parameters for the last iteration of GD
+        loss: the loss value (scalar) for the last iteration of GD
+    """
+    w = initial_w
+    N = len(y)
+    batch_size = 32
+    for n_iter in range(max_iters):
+        # choose batch_size data points
+        data_points = np.random.randint(0, N, size=batch_size)
+        # pick out the datapoints
+        x_batch = tx[data_points]
+        y_batch = y[data_points]
+        # compute stochastic gradient
+        stochastic_gradient = compute_gradient_log_loss(y_batch, x_batch, w, lambda_)
+        # update w by gradient
+        w = w-(gamma*stochastic_gradient)
+    # compute log loss
+    loss = compute_log_loss(y, tx, w, lambda_)
     return w, loss
