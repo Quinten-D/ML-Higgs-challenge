@@ -70,7 +70,7 @@ def compute_log_loss(y, tx, w, lambda_=0):
     prediction = sigmoid(np.ravel(np.dot(tx, w.reshape((len(w),1)))))
     # compute the log loss
     loss_vector = -y*np.log(prediction) - (np.ones(N)-y)*np.log(np.ones(N)-prediction)
-    loss = 1/N * np.sum(loss_vector) + lambda_*np.norm(w, 2)**2
+    loss = 1/N * np.sum(loss_vector) + lambda_*np.linalg.norm(w, 2)**2
     return loss
 
 def compute_gradient_log_loss(y, tx, w, lambda_=0):

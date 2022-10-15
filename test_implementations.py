@@ -65,6 +65,7 @@ def split_data(x, y, ratio, seed=1):
     return (x[training_indexes], x[control_indexes], y[training_indexes], y[control_indexes])
     #raise NotImplementedError
 
+# for all required functions: gamma=0.01, lambda=0.1, max_iterations=100
 
 def train_test_split_demo_1(x, y, degree, ratio, seed):
     # split the data, and return train and test data:
@@ -74,6 +75,18 @@ def train_test_split_demo_1(x, y, degree, ratio, seed):
     test_x_poly = build_poly(test_x, degree)
     # calculate weight and loss
     w, loss = mean_squared_error_gd(train_y,train_x_poly, np.random.rand(len(train_x_poly[0])), 100, 0.01)
+    print("proportion={p}, degree={d}, Training loss={tr:.3f}".format(
+        p=ratio, d=degree, tr=loss))
+    return train_x, test_x, train_y, test_y, w
+
+def train_test_split_demo_2(x, y, degree, ratio, seed):
+    # split the data, and return train and test data:
+    train_x, test_x, train_y, test_y = split_data(x, y, ratio, seed)
+    # form train and test data with polynomial basis function:
+    train_x_poly = build_poly(train_x, degree)
+    test_x_poly = build_poly(test_x, degree)
+    # calculate weight and loss
+    w, loss = mean_squared_error_sgd(train_y, train_x_poly, np.random.rand(len(train_x_poly[0])), 100, 0.01)
     print("proportion={p}, degree={d}, Training loss={tr:.3f}".format(
         p=ratio, d=degree, tr=loss))
     return train_x, test_x, train_y, test_y, w
@@ -90,14 +103,48 @@ def train_test_split_demo_3(x, y, degree, ratio, seed):
         p=ratio, d=degree, tr=loss))
     return train_x, test_x, train_y, test_y, w
 
+def train_test_split_demo_4(x, y, degree, ratio, seed):
+    # split the data, and return train and test data:
+    train_x, test_x, train_y, test_y = split_data(x, y, ratio, seed)
+    # form train and test data with polynomial basis function:
+    train_x_poly = build_poly(train_x, degree)
+    test_x_poly = build_poly(test_x, degree)
+    # calculate weight and loss
+    w, loss = ridge_regression(train_y, train_x_poly, 0.1)
+    print("proportion={p}, degree={d}, Training loss={tr:.3f}".format(
+        p=ratio, d=degree, tr=loss))
+    return train_x, test_x, train_y, test_y, w
+
+def train_test_split_demo_5(x, y, degree, ratio, seed):
+    # split the data, and return train and test data:
+    train_x, test_x, train_y, test_y = split_data(x, y, ratio, seed)
+    # form train and test data with polynomial basis function:
+    train_x_poly = build_poly(train_x, degree)
+    test_x_poly = build_poly(test_x, degree)
+    # calculate weight and loss
+    w, loss = logistic_regression(train_y, train_x_poly, np.random.rand(len(train_x_poly[0])), 100, 0.01)
+    print("proportion={p}, degree={d}, Training loss={tr:.3f}".format(
+        p=ratio, d=degree, tr=loss))
+    return train_x, test_x, train_y, test_y, w
+
+def train_test_split_demo_6(x, y, degree, ratio, seed):
+    # split the data, and return train and test data:
+    train_x, test_x, train_y, test_y = split_data(x, y, ratio, seed)
+    # form train and test data with polynomial basis function:
+    train_x_poly = build_poly(train_x, degree)
+    test_x_poly = build_poly(test_x, degree)
+    # calculate weight and loss
+    w, loss = reg_logistic_regression(train_y, train_x_poly, 0.1, np.random.rand(len(train_x_poly[0])), 100, 0.01)
+    print("proportion={p}, degree={d}, Training loss={tr:.3f}".format(
+        p=ratio, d=degree, tr=loss))
+    return train_x, test_x, train_y, test_y, w
+
 
 if __name__ == '__main__':
     # load dataset
     x, y = load_data()
-    print("shape of x {}".format(x.shape))
-    print("shape of y {}".format(y.shape))
 
-    # demo time, make plot of test data and predictions on test data
+    # demo time, make plot of training data and predictions on training data
     seed = 6
     degrees = [1, 3, 7, 12]
     split_ratios = [0.9, 0.7, 0.5, 0.1]
@@ -108,7 +155,8 @@ if __name__ == '__main__':
 
     for ind, split_ratio in enumerate(split_ratios):
         for ind_d, degree in enumerate(degrees):
-            x_tr, x_te, y_tr, y_te, w = train_test_split_demo_3(x, y, degree, split_ratio, seed)
+            # choose one of the 6 functions to plot
+            x_tr, x_te, y_tr, y_te, w = train_test_split_demo_6(x, y, degree, split_ratio, seed)
             plot_fitted_curve(
                 y_tr, x_tr, w, degree, axs[ind_d][ind % num_col])
             axs[ind_d][ind].set_title(f'Degree: {degree}, Split {split_ratio}')
