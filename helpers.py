@@ -53,7 +53,7 @@ def load_data(path_dataset):
         standardize(curFeature)
         features.append(curFeature)
 
-    return features, output
+    return np.array(features).T, np.array(output)
 
 def load_training_data():
     return load_data("Data/train.csv")
@@ -71,11 +71,11 @@ def standardize(x):
     return x, mean_x, std_x
 
 
-def build_model_data(features, output):
+def build_model_data(features):
     """Form (y,tX) to get regression data in matrix form."""
     num_samples = features.shape[0]
     tx = np.c_[np.ones(num_samples), features]
-    return output, tx
+    return tx
 
 
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
