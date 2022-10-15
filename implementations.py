@@ -19,7 +19,7 @@ def compute_MSE_loss(y, tx, w):
     y = np.reshape(y, (len(y), 1))
     e = np.square(y - np.matmul(tx, w))
     N = len(y)
-    loss = (1/2*N) * np.sum(e, axis=0)
+    loss = (1/(2*N)) * np.sum(e, axis=0)
     return loss[0]
 
 def compute_gradient(y, tx, w):
@@ -121,7 +121,7 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
     loss = compute_MSE_loss(y, tx, w)
     return w, loss
 
-def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma, batch_size=32):
+def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma, batch_size=128):
     """The Stochastic Gradient Descent algorithm (SGD) for a linear model using the MSE loss funtion.
 
     Args:
