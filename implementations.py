@@ -17,7 +17,7 @@ def compute_MSE_loss(y, tx, w):
     """
     w = w.reshape((len(w),1))
     y = np.reshape(y, (len(y), 1))
-    e = (y - np.dot(tx, w))**2
+    e = np.square(y - np.matmul(tx, w))
     N = len(y)
     loss = (1/2*N) * np.sum(e, axis=0)
     return loss[0]
@@ -39,7 +39,7 @@ def compute_gradient(y, tx, w):
     # compute gradient
     N = len(y)
     e = y-np.matmul(tx, w)
-    gradient = -1/N*np.matmul(np.transpose(tx), e)
+    gradient = -1/N*np.dot(np.transpose(tx), e)
     return gradient.reshape((1,len(gradient)))[0]
 
 def sigmoid(x):

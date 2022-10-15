@@ -65,8 +65,6 @@ def split_data(x, y, ratio, seed=1):
     return (x[training_indexes], x[control_indexes], y[training_indexes], y[control_indexes])
     #raise NotImplementedError
 
-# for all required functions: gamma=0.01, lambda=0.1, max_iterations=100
-
 def train_test_split_demo_1(x, y, degree, ratio, seed):
     # split the data, and return train and test data:
     train_x, test_x, train_y, test_y = split_data(x, y, ratio, seed)
@@ -74,7 +72,7 @@ def train_test_split_demo_1(x, y, degree, ratio, seed):
     train_x_poly = build_poly(train_x, degree)
     test_x_poly = build_poly(test_x, degree)
     # calculate weight and loss
-    w, loss = mean_squared_error_gd(train_y,train_x_poly, np.random.rand(len(train_x_poly[0])), 100, 0.01)
+    w, loss = mean_squared_error_gd(train_y,train_x_poly, np.random.rand(len(train_x_poly[0])), 10000, 0.0001)
     print("proportion={p}, degree={d}, Training loss={tr:.3f}".format(
         p=ratio, d=degree, tr=loss))
     return train_x, test_x, train_y, test_y, w
@@ -86,7 +84,7 @@ def train_test_split_demo_2(x, y, degree, ratio, seed):
     train_x_poly = build_poly(train_x, degree)
     test_x_poly = build_poly(test_x, degree)
     # calculate weight and loss
-    w, loss = mean_squared_error_sgd(train_y, train_x_poly, np.random.rand(len(train_x_poly[0])), 100, 0.01)
+    w, loss = mean_squared_error_sgd(train_y, train_x_poly, np.random.rand(len(train_x_poly[0])), 10000, 0.0001)
     print("proportion={p}, degree={d}, Training loss={tr:.3f}".format(
         p=ratio, d=degree, tr=loss))
     return train_x, test_x, train_y, test_y, w
@@ -122,7 +120,7 @@ def train_test_split_demo_5(x, y, degree, ratio, seed):
     train_x_poly = build_poly(train_x, degree)
     test_x_poly = build_poly(test_x, degree)
     # calculate weight and loss
-    w, loss = logistic_regression(train_y, train_x_poly, np.random.rand(len(train_x_poly[0])), 100, 0.01)
+    w, loss = logistic_regression(train_y, train_x_poly, np.random.rand(len(train_x_poly[0])), 10000, 0.01)
     print("proportion={p}, degree={d}, Training loss={tr:.3f}".format(
         p=ratio, d=degree, tr=loss))
     return train_x, test_x, train_y, test_y, w
@@ -155,8 +153,9 @@ if __name__ == '__main__':
 
     for ind, split_ratio in enumerate(split_ratios):
         for ind_d, degree in enumerate(degrees):
-            # choose one of the 6 functions to plot
+            # choose one of the 6 functions to plot, this data makes no sense for functions 5 and 6 !!!
             x_tr, x_te, y_tr, y_te, w = train_test_split_demo_3(x, y, degree, split_ratio, seed)
+            #x_tr, x_te, y_tr, y_te, w = train_test_split_demo_4(x, np.ones(len(y)), degree, split_ratio, seed)
             plot_fitted_curve(
                 y_tr, x_tr, w, degree, axs[ind_d][ind % num_col])
             axs[ind_d][ind].set_title(f'Degree: {degree}, Split {split_ratio}')
