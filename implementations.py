@@ -79,7 +79,7 @@ def runModel():
     tx = build_model_data(features)
     w, mse_train = trainModel()
     y = np.dot(tx, w)
-    y[y < 0.5] = 0
+    y[y < 0.5] = -1
     y[y >= 0.5] = 1
 
     mse_test = compute_MSE(y, tx, w)
