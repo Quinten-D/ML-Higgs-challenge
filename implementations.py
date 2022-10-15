@@ -68,6 +68,28 @@ def least_squares(y, tx):
 def ridge_regression(y, tx, lambda_):
     return ridge_regression_Charbel(y, tx, lambda_)
 
+def trainModel():
+    features, y, ids = load_training_data()
+    tx = build_model_data(features)
+    w, mse = least_squares(y, tx)
+    return w, mse
+
+def runModel():
+    features, _, ids = load_test_data()
+    tx = build_model_data(features)
+    w, mse_train = trainModel()
+    y = np.dot(tx, w)
+    y[y < 0.5] = 0
+    y[y >= 0.5] = 1
+
+    mse_test = compute_MSE(y, tx, w)
+    print(y)
+    print(w)
+    print(mse_test)
+
+    create_submission(ids, y, "out.txt")
+
+runModel()
 
 
 

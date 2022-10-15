@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """some helper functions."""
 import numpy as np
+import csv
 
 def load_old_data(sub_sample=True, add_outlier=False):
     """Load data and convert it to the metric system."""
@@ -39,6 +40,9 @@ def build_old_model_data(height, weight):
 
 
 def load_data(path_dataset):
+    ids = np.genfromtxt(
+        path_dataset, delimiter=",", skip_header=1, usecols=[0])
+
     output = np.genfromtxt(
         path_dataset, delimiter=",", skip_header=1, usecols=[1],
         converters={1: lambda x: 0 if b"s" in x else 1})
@@ -53,7 +57,7 @@ def load_data(path_dataset):
         standardize(curFeature)
         features.append(curFeature)
 
-    return np.array(features).T, np.array(output)
+    return np.array(features).T, np.array(output), np.array(ids)
 
 def load_training_data():
     return load_data("Data/train.csv")
@@ -61,6 +65,13 @@ def load_training_data():
 def load_test_data():
     return load_data("Data/test.csv")
 
+def create_submission(ids, y_pred, outputFileName):
+    with open(outputFileName, 'w') as csvfile:
+        fieldnames = ['Id', 'Prediction']
+        writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
+        writer.writeheader()
+        for r1, r2 in zip(ids, y_pred):
+            writer.writerow({'Id':int(r1),'Prediction':int(r2)})
 
 def standardize(x):
     """Standardize the original data set."""
@@ -72,7 +83,6 @@ def standardize(x):
 
 
 def build_model_data(features):
-    """Form (y,tX) to get regression data in matrix form."""
     num_samples = features.shape[0]
     tx = np.c_[np.ones(num_samples), features]
     return tx
