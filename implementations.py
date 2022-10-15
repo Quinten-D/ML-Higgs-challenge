@@ -195,7 +195,7 @@ def ridge_regression(y, tx, lambda_):
     loss = compute_MSE_loss(y, tx, w) + lambda_*np.linalg.norm(w, 2)**2
     return w, loss
 
-def logistic_regression(y, tx, initial w, max iters, gamma):
+def logistic_regression(y, tx, initial_w, max_iters, gamma):
     """logistic regression using SGD
 
     Args:
@@ -226,7 +226,7 @@ def logistic_regression(y, tx, initial w, max iters, gamma):
     loss = compute_log_loss(y, tx, w)
     return w, loss
 
-def reg_logistic_regression(y, tx, lambda_ , initial w, max iters, gamma):
+def reg_logistic_regression(y, tx, lambda_ , initial_w, max_iters, gamma):
     """logistic regression with regularization term using SGD
 
     Args:

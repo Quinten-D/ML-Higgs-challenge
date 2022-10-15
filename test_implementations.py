@@ -73,7 +73,7 @@ def train_test_split_demo_1(x, y, degree, ratio, seed):
     train_x_poly = build_poly(train_x, degree)
     test_x_poly = build_poly(test_x, degree)
     # calculate weight and loss TODO
-    w, loss = mean_squared_error_gd(train_y, train_x_poly, 100, 0.01)
+    w, loss = mean_squared_error_gd(train_y, np.random.rand(len(train_y)),train_x_poly, 100, 0.01)
     print("proportion={p}, degree={d}, Training loss={tr:.3f}".format(
         p=ratio, d=degree, tr=loss))
     return train_x, test_x, train_y, test_y, w
