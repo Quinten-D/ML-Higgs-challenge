@@ -72,8 +72,20 @@ def train_test_split_demo_1(x, y, degree, ratio, seed):
     # form train and test data with polynomial basis function:
     train_x_poly = build_poly(train_x, degree)
     test_x_poly = build_poly(test_x, degree)
-    # calculate weight and loss TODO
-    w, loss = mean_squared_error_gd(train_y, np.random.rand(len(train_y)),train_x_poly, 100, 0.01)
+    # calculate weight and loss
+    w, loss = mean_squared_error_gd(train_y,train_x_poly, np.random.rand(len(train_x_poly[0])), 100, 0.01)
+    print("proportion={p}, degree={d}, Training loss={tr:.3f}".format(
+        p=ratio, d=degree, tr=loss))
+    return train_x, test_x, train_y, test_y, w
+
+def train_test_split_demo_3(x, y, degree, ratio, seed):
+    # split the data, and return train and test data:
+    train_x, test_x, train_y, test_y = split_data(x, y, ratio, seed)
+    # form train and test data with polynomial basis function:
+    train_x_poly = build_poly(train_x, degree)
+    test_x_poly = build_poly(test_x, degree)
+    # calculate weight and loss
+    w, loss = least_squares(train_y, train_x_poly)
     print("proportion={p}, degree={d}, Training loss={tr:.3f}".format(
         p=ratio, d=degree, tr=loss))
     return train_x, test_x, train_y, test_y, w
@@ -85,7 +97,7 @@ if __name__ == '__main__':
     print("shape of x {}".format(x.shape))
     print("shape of y {}".format(y.shape))
 
-    # demo time
+    # demo time, make plot of test data and predictions on test data
     seed = 6
     degrees = [1, 3, 7, 12]
     split_ratios = [0.9, 0.7, 0.5, 0.1]
@@ -96,11 +108,12 @@ if __name__ == '__main__':
 
     for ind, split_ratio in enumerate(split_ratios):
         for ind_d, degree in enumerate(degrees):
-            x_tr, x_te, y_tr, y_te, w = train_test_split_demo_1(x, y, degree, split_ratio, seed)
+            x_tr, x_te, y_tr, y_te, w = train_test_split_demo_3(x, y, degree, split_ratio, seed)
             plot_fitted_curve(
                 y_tr, x_tr, w, degree, axs[ind_d][ind % num_col])
             axs[ind_d][ind].set_title(f'Degree: {degree}, Split {split_ratio}')
     plt.tight_layout()
+    plt.show()
 
 
 
