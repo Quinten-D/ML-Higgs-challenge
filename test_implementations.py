@@ -156,7 +156,7 @@ if __name__ == '__main__':
     for ind, split_ratio in enumerate(split_ratios):
         for ind_d, degree in enumerate(degrees):
             # choose one of the 6 functions to plot
-            x_tr, x_te, y_tr, y_te, w = train_test_split_demo_6(x, y, degree, split_ratio, seed)
+            x_tr, x_te, y_tr, y_te, w = train_test_split_demo_3(x, y, degree, split_ratio, seed)
             plot_fitted_curve(
                 y_tr, x_tr, w, degree, axs[ind_d][ind % num_col])
             axs[ind_d][ind].set_title(f'Degree: {degree}, Split {split_ratio}')
