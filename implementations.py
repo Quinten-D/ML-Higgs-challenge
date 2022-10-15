@@ -1,6 +1,6 @@
 
 import numpy as np
-from helpers import batch_iter
+from helpers import *
 
 def compute_MSE(y, tx, w):
     N = y.shape[0]
@@ -86,5 +86,5 @@ def least_squares(y, tx):
 def ridge_regression(y, tx, lambda_):
     return ridge_regression_Charbel(y, tx, lambda_)
 
-
+load_training_data()
 
