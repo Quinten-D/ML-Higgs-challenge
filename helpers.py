@@ -45,7 +45,7 @@ def load_data(path_dataset):
 
     output = np.genfromtxt(
         path_dataset, delimiter=",", skip_header=1, usecols=[1],
-        converters={1: lambda x: 0 if b"s" in x else 1})
+        converters={1: lambda x: -1 if b"b" in x else 1})
 
     data = np.genfromtxt(
         path_dataset, delimiter=",", skip_header=1, usecols=[col for col in range(2, 32)])
