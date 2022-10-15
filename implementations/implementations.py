@@ -105,7 +105,7 @@ def ridge_regression(y, tx, lambda_):
     N = np.shape(y)[0]
 
     lambda_prime = 2*N*lambda_
-    A = np.dot(tx.T, tx)+lambda_prime*np.identity(N)
+    A = np.dot(tx.T, tx)+lambda_prime*np.identity(np.shape(tx)[1])
     b = np.dot(tx.T, y)
 
     # solve for optimal weights and compute loss
