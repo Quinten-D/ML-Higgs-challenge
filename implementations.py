@@ -67,10 +67,10 @@ def compute_log_loss(y, tx, w, lambda_=0):
     """
     N = len(y)
     # compute the predictions vector (shape (N,)) with probabilities P(y=1|x)
-    prediction = sigmoid(np.ravel(np.dot(tx, w.reshape((len(w),1)))))
+    prediction = sigmoid(np.dot(tx, w))
     # compute the log loss
-    loss_vector = -y*np.log(prediction) - (np.ones(N)-y)*np.log(np.ones(N)-prediction)
-    loss = 1/N * np.sum(loss_vector) + lambda_*(np.linalg.norm(w, 2)**2)
+    loss_vector = y*np.log(prediction) + (np.ones(N)-y)*np.log(np.ones(N)-prediction)
+    loss = -1/N * np.sum(loss_vector) + lambda_*(np.linalg.norm(w, 2)**2)
     return loss
 
 def compute_gradient_log_loss(y, tx, w, lambda_=0):
@@ -87,7 +87,7 @@ def compute_gradient_log_loss(y, tx, w, lambda_=0):
     """
     N = len(y)
     # compute the predictions vector (shape (N,)) with probabilities P(y=1|x)
-    prediction = sigmoid(np.ravel(np.dot(tx, w.reshape((len(w),1)))))
+    prediction = sigmoid(np.dot(tx, w))
     # compute the gradient of the log loss
     grad_log_loss = 1/N * np.dot(tx.T, prediction-y)
     # add the gradient of the regularization term
