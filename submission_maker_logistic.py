@@ -45,7 +45,7 @@ if __name__ == '__main__':
     tx = build_model_data(standardize(features)[0])
 
     # set up testing parameters
-    max_iters = 1000000
+    max_iters = 10000
     gamma = 0.01
     batch_size = 1
     lambda_ = 0.5

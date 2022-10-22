@@ -67,7 +67,6 @@ def compute_log_loss(y, tx, w, lambda_=0):
     """
     N = len(y)
     # compute the predictions vector (shape (N,)) with probabilities P(y=1|x)
-    ff = np.dot(tx, w)
     prediction = sigmoid(np.dot(tx, w))
     # compute the log loss
     loss_vector = y*np.log(prediction) + (np.ones(N)-y)*np.log(np.ones(N)-prediction)
