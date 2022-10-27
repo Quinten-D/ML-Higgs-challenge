@@ -49,11 +49,17 @@ def compute_gradient_log_loss(y, tx, w, lambda_=0):
     return grad
 
 def compute_MSE(y, tx, w, _lambda = 0):
+    """
+    implementations charbel
+    """
     N = y.shape[0]
     e = y - np.dot(tx, w)
     return 1 / (2 * N) * np.sum(e ** 2)
 
 def gradient_descent_Charbel(y, tx, initial_w, max_iters, gamma):
+    """
+    implementations charbel
+    """
     def compute_gradient(y, tx, w):
         N = y.shape[0]
         e = y - np.dot(tx, w)
@@ -69,6 +75,9 @@ def gradient_descent_Charbel(y, tx, initial_w, max_iters, gamma):
 
 
 def stochastic_gradient_descent_Charbel(y, tx, initial_w, max_iters, gamma, batch_size = 1):
+    """
+    implementations charbel
+    """
     def compute_stoch_gradient(y, tx, w):
         N = y.shape[0]
         e = y - np.dot(tx, w)
@@ -86,6 +95,10 @@ def stochastic_gradient_descent_Charbel(y, tx, initial_w, max_iters, gamma, batc
     return w, loss
 
 def least_squares_Charbel(y, tx):
+    """
+    implementations charbel
+    """
+
     XtX = np.dot(tx.T, tx)
     w = np.dot(np.dot(np.linalg.inv(XtX), tx.T), y)
     MSE = compute_MSE(y, tx, w)
@@ -93,6 +106,10 @@ def least_squares_Charbel(y, tx):
     return w, MSE
 
 def ridge_regression_Charbel(y, tx, lambda_):
+    """
+    implementations charbel
+    """
+
     N, D = tx.shape
     XtX = np.dot(tx.T, tx)
     XtX_Lambda = XtX + 2 * N * lambda_ * np.identity(D)
@@ -101,18 +118,34 @@ def ridge_regression_Charbel(y, tx, lambda_):
 
 # Linear Regression using Gradient Descent
 def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
+    """
+    implementations charbel
+    """
+
     return gradient_descent_Charbel(y, tx, initial_w, max_iters, gamma)
 
 # Linear Regression using Stochastic Gradient Descent
 def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma, batch_size = 1):
+    """
+    implementations charbel
+    """
+
     return stochastic_gradient_descent_Charbel(y, tx, initial_w, max_iters, gamma, batch_size)
 
 # Least Squares Regression using Normal Equations
 def least_squares(y, tx):
+    """
+    implementations charbel
+    """
+
     return least_squares_Charbel(y, tx)
 
 # Ridge Regression using Normal Equations
 def ridge_regression(y, tx, lambda_):
+    """
+    implementations charbel
+    """
+
     return ridge_regression_Charbel(y, tx, lambda_)
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
@@ -175,12 +208,20 @@ def reg_logistic_regression(y, tx, lambda_ , initial_w, max_iters, gamma):
     return w, loss
 
 def trainModel():
+    """
+    implementations charbel
+    """
+
     features, y, ids = load_training_data()
     tx = build_model_data(features)
     w, mse = least_squares(y, tx)
     return w, mse
 
 def runModel():
+    """
+    implementations charbel
+    """
+
     features, _, ids = load_test_data()
     tx = build_model_data(features)
     w, mse_train = trainModel()
