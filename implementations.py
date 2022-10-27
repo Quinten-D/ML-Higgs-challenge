@@ -47,7 +47,7 @@ def compute_gradient_log_loss(y, tx, w, lambda_=0):
     # compute the predictions vector (shape (N,)) with probabilities P(y=1|x)
     prediction = sigmoid(np.dot(tx, w))
     # compute the gradient of the log loss
-    grad_log_loss = 1/N * np.dot(tx.T, prediction-y)
+    grad_log_loss = 1/(N**2) * np.dot(tx.T, prediction-y)
     # add the gradient of the regularization term
     grad = grad_log_loss + 2*lambda_*w
     return grad
