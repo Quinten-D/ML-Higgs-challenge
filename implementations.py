@@ -121,7 +121,7 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
     loss = compute_MSE_loss(y, tx, w)
     return w, loss
 
-def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma, batch_size=128):
+def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma, batch_size=1):
     """The Stochastic Gradient Descent algorithm (SGD) for a linear model using the MSE loss funtion.
 
     Args:
@@ -211,7 +211,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     """
     w = initial_w
     N = len(y)
-    batch_size = 32
+    batch_size = 1
     for n_iter in range(max_iters):
         # choose batch_size data points
         data_points = np.random.randint(0, N, size=batch_size)
