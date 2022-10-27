@@ -68,7 +68,9 @@ def compute_MSE(y, tx, w):
     loss = (1/(2*N)) * np.sum(e, axis=0)
     return loss[0]
 
-def gradient_descent_Charbel(y, tx, initial_w, max_iters, gamma):
+
+# Linear Regression using Gradient Descent
+def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
     """
     implementations charbel
     """
@@ -85,8 +87,8 @@ def gradient_descent_Charbel(y, tx, initial_w, max_iters, gamma):
     loss = compute_MSE(y, tx, w)
     return w, loss
 
-
-def stochastic_gradient_descent_Charbel(y, tx, initial_w, max_iters, gamma, batch_size = 1):
+# Linear Regression using Stochastic Gradient Descent
+def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma, batch_size = 1):
     """
     implementations charbel
     """
@@ -106,7 +108,8 @@ def stochastic_gradient_descent_Charbel(y, tx, initial_w, max_iters, gamma, batc
 
     return w, loss
 
-def least_squares_Charbel(y, tx):
+# Least Squares Regression using Normal Equations
+def least_squares(y, tx):
     """
     implementations charbel
     """
@@ -117,48 +120,17 @@ def least_squares_Charbel(y, tx):
 
     return w, MSE
 
-def ridge_regression_Charbel(y, tx, lambda_):
+# Ridge Regression using Normal Equations
+def ridge_regression(y, tx, lambda_):
     """
     implementations charbel
     """
-
     N, D = tx.shape
     XtX = np.dot(tx.T, tx)
     XtX_Lambda = XtX + 2 * N * lambda_ * np.identity(D)
     w = np.dot(np.dot(np.linalg.inv(XtX_Lambda), tx.T), y)
     return w, compute_MSE(y, tx, w)
 
-# Linear Regression using Gradient Descent
-def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
-    """
-    implementations charbel
-    """
-
-    return gradient_descent_Charbel(y, tx, initial_w, max_iters, gamma)
-
-# Linear Regression using Stochastic Gradient Descent
-def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma, batch_size = 1):
-    """
-    implementations charbel
-    """
-
-    return stochastic_gradient_descent_Charbel(y, tx, initial_w, max_iters, gamma, batch_size)
-
-# Least Squares Regression using Normal Equations
-def least_squares(y, tx):
-    """
-    implementations charbel
-    """
-
-    return least_squares_Charbel(y, tx)
-
-# Ridge Regression using Normal Equations
-def ridge_regression(y, tx, lambda_):
-    """
-    implementations charbel
-    """
-
-    return ridge_regression_Charbel(y, tx, lambda_)
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
     """logistic regression using SGD
@@ -219,34 +191,6 @@ def reg_logistic_regression(y, tx, lambda_ , initial_w, max_iters, gamma):
     loss = compute_log_loss(y, tx, w)
     return w, loss
 
-def trainModel():
-    """
-    implementations charbel
-    """
-
-    features, y, ids = load_training_data()
-    tx = build_model_data(features)
-    w, mse = least_squares(y, tx)
-    return w, mse
-
-def runModel():
-    """
-    implementations charbel
-    """
-
-    features, _, ids = load_test_data()
-    tx = build_model_data(features)
-    w, mse_train = trainModel()
-    y = np.dot(tx, w)
-    y[y < 0] = -1
-    y[y >= 0] = 1
-
-    print(y)
-    print(w)
-
-    create_submission(ids, y, "out.txt")
-
-#runModel()
 
 
 
