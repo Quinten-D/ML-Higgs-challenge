@@ -21,13 +21,16 @@ def compute_log_loss(y, tx, w, lambda_=0):
     Returns:
         loss: the value of the loss (a scalar), corresponding to the input parameters w.
     """
-    N = len(y)
-    # compute the predictions vector (shape (N,)) with probabilities P(y=1|x)
-    prediction = sigmoid(np.dot(tx, w))
-    # compute the log loss
-    loss_vector = y*np.log(prediction) + (np.ones(N)-y)*np.log(np.ones(N)-prediction)
-    loss = -1/N * np.sum(loss_vector) + lambda_*(np.linalg.norm(w, 2)**2)
-    return loss
+    # N = len(y)
+    # # compute the predictions vector (shape (N,)) with probabilities P(y=1|x)
+    # prediction = sigmoid(np.dot(tx, w))
+    # # compute the log loss !
+    # loss_vector = y*np.log(prediction) + (np.ones(N)-y)*np.log(np.ones(N)-prediction)
+    # loss = -1/N * np.sum(loss_vector) + lambda_*(np.linalg.norm(w, 2)**2)
+    # return loss
+    pred = sigmoid(tx.dot(w))
+    loss = y.T.dot(np.log(pred)) + (1 -y).T.dot(np.log(1 - pred))
+    return np.squeeze(-loss)
 
 def compute_gradient_log_loss(y, tx, w, lambda_=0):
     """Computes the gradient at w for a linear model with log loss cost function and L2 regularization.
