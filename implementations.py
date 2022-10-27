@@ -192,7 +192,7 @@ def ridge_regression(y, tx, lambda_):
     A_inverse = np.linalg.inv(A)
     w_ridge = np.matmul(A_inverse, np.matmul(np.transpose(tx), y.reshape((N, 1))))
     w = w_ridge.reshape((1, D))[0]
-    loss = compute_MSE_loss(y, tx, w) + lambda_*np.linalg.norm(w, 2)**2
+    loss = compute_MSE_loss(y, tx, w)
     return w, loss
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
@@ -255,5 +255,5 @@ def reg_logistic_regression(y, tx, lambda_ , initial_w, max_iters, gamma):
         # update w by gradient
         w = w-(gamma*stochastic_gradient)
     # compute log loss
-    loss = compute_log_loss(y, tx, w, lambda_)
+    loss = compute_log_loss(y, tx, w, 0)
     return w, loss

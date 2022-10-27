@@ -23,6 +23,16 @@ def load_csv_data_logistic(data_path, sub_sample=False):
 
     return yb, input_data, ids
 
+def preproces(input_data):
+    features = []
+    for i in range(0, 30):
+        curFeature = input_data[:, i]
+        curFeature[curFeature == -999] = np.mean(curFeature[curFeature != -999])
+        standardize(curFeature)
+        features.append(curFeature)
+    return np.array(features).T
+
+
 def create_csv_submission(ids, y_pred, name):
     """
     Creates an output file in .csv format for submission to Kaggle or AIcrowd
@@ -42,7 +52,11 @@ if __name__ == '__main__':
     # load project data
     output, features, ids = load_csv_data_logistic("train.csv", sub_sample=False)
     y = output
-    tx = build_model_data(standardize(features)[0])
+    features = preproces(features)
+    #tx = build_model_data(standardize(features)[0])
+    tx = build_model_data(features)
+
+
 
     # set up testing parameters
     max_iters = 10000
