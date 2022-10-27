@@ -26,7 +26,7 @@ def compute_log_loss(y, tx, w, lambda_=0):
     prediction = sigmoid(np.dot(tx, w))
     # compute the log loss !
     loss_vector = y*np.log(prediction) + (np.ones(N)-y)*np.log(np.ones(N)-prediction)
-    loss = np.sum(loss_vector) + lambda_*(np.linalg.norm(w, 2)**2)
+    loss = - np.sum(loss_vector) + lambda_*(np.linalg.norm(w, 2)**2)
     return loss
     # N = len(y)
     # pred = sigmoid(tx.dot(w))
