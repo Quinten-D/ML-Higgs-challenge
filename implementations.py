@@ -28,8 +28,9 @@ def compute_log_loss(y, tx, w, lambda_=0):
     # loss_vector = y*np.log(prediction) + (np.ones(N)-y)*np.log(np.ones(N)-prediction)
     # loss = -1/N * np.sum(loss_vector) + lambda_*(np.linalg.norm(w, 2)**2)
     # return loss
+    N = len(y)
     pred = sigmoid(tx.dot(w))
-    loss = y.T.dot(np.log(pred)) + (1 -y).T.dot(np.log(1 - pred))
+    loss = 1/2*(np.ones(N)+y).T.dot(np.log(pred)) + 1/2*(np.ones(N)-y).T.dot(np.log(1 - pred))
     return np.squeeze(-loss)
 
 def compute_gradient_log_loss(y, tx, w, lambda_=0):
