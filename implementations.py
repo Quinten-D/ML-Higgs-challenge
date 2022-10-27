@@ -48,13 +48,21 @@ def compute_gradient_log_loss(y, tx, w, lambda_=0):
     grad = grad_log_loss + 2*lambda_*w
     return grad
 
-def compute_MSE(y, tx, w, _lambda = 0):
+def compute_MSE(y, tx, w):
+    """Calculate the loss using MSE
+    Args:
+        y: shape=(N, )
+        tx: shape=(N,M)
+        w: shape=(M,). The vector of model parameters.
+    Returns:
+        the value of the loss (a scalar), corresponding to the input parameters w.
     """
-    implementations charbel
-    """
-    N = y.shape[0]
-    e = y - np.dot(tx, w)
-    return 1 / (2 * N) * np.sum(e ** 2)
+    w = w.reshape((len(w),1))
+    y = np.reshape(y, (len(y), 1))
+    e = np.square(y - np.matmul(tx, w))
+    N = len(y)
+    loss = (1/(2*N)) * np.sum(e, axis=0)
+    return loss[0]
 
 def gradient_descent_Charbel(y, tx, initial_w, max_iters, gamma):
     """
