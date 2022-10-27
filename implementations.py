@@ -174,7 +174,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         # update w by gradient
         w = w-(gamma*stochastic_gradient)
     # compute log loss
-    loss = compute_log_loss(y, tx, w)
+    loss = compute_MSE(y, tx, w)
     return w, loss
 
 def reg_logistic_regression(y, tx, lambda_ , initial_w, max_iters, gamma):
@@ -204,7 +204,7 @@ def reg_logistic_regression(y, tx, lambda_ , initial_w, max_iters, gamma):
         # update w by gradient
         w = w-(gamma*stochastic_gradient)
     # compute log loss
-    loss = compute_log_loss(y, tx, w, 0)
+    loss = compute_MSE(y, tx, w)
     return w, loss
 
 def trainModel():
