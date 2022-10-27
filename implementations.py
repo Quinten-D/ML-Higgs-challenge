@@ -243,7 +243,7 @@ def reg_logistic_regression(y, tx, lambda_ , initial_w, max_iters, gamma):
     """
     w = initial_w
     N = len(y)
-    batch_size = 32
+    batch_size = 1
     for n_iter in range(max_iters):
         # choose batch_size data points
         data_points = np.random.randint(0, N, size=batch_size)
