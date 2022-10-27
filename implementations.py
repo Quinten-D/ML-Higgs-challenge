@@ -87,7 +87,7 @@ def runModel():
 
     create_submission(ids, y, "out.txt")
 
-runModel()
+#runModel()
 
 
 
