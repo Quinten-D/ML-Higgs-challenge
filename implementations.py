@@ -70,7 +70,8 @@ def compute_log_loss(y, tx, w, lambda_=0):
     prediction = sigmoid(np.dot(tx, w))
     # compute the log loss
     loss_vector = y*np.log(prediction) + (np.ones(N)-y)*np.log(np.ones(N)-prediction)
-    loss = -1/N * np.sum(loss_vector) + lambda_*(np.linalg.norm(w, 2)**2)
+    # loss = -1/N * np.sum(loss_vector) + lambda_*(np.linalg.norm(w, 2)**2)
+    loss = -1/(N**2) * np.sum(loss_vector) + lambda_*(np.linalg.norm(w, 2)**2)
     return loss
 
 def compute_gradient_log_loss(y, tx, w, lambda_=0):
@@ -224,6 +225,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         w = w-(gamma*stochastic_gradient)
     # compute log loss
     loss = compute_log_loss(y, tx, w)
+    #loss = compute_MSE_loss(y, tx, w)
     return w, loss
 
 def reg_logistic_regression(y, tx, lambda_ , initial_w, max_iters, gamma):
@@ -256,4 +258,5 @@ def reg_logistic_regression(y, tx, lambda_ , initial_w, max_iters, gamma):
         w = w-(gamma*stochastic_gradient)
     # compute log loss
     loss = compute_log_loss(y, tx, w, 0)
+    #loss = compute_MSE_loss(y, tx, w)
     return w, loss
