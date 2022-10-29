@@ -23,19 +23,12 @@ def compute_log_loss(y, tx, w, lambda_=0):
         loss: the value of the loss (a scalar), corresponding to the input parameters w.
     """
     N = len(y)
-    # compute the predictions vector (shape (N,)) with probabilities P(y=1|x)
     prediction = sigmoid(np.dot(tx, w))
-    # compute the log loss !
     loss_vector = y * np.log(prediction) + (np.ones(N) - y) * np.log(
         np.ones(N) - prediction
     )
     loss = -1 / (N**2) * np.sum(loss_vector) + lambda_ * (np.linalg.norm(w, 2) ** 2)
     return loss
-    # N = len(y)
-    # pred = sigmoid(tx.dot(w))
-    # loss = 1/2*(np.ones(N)+y).T.dot(np.log(pred)) + 1/2*(np.ones(N)-y).T.dot(np.log(1 - pred)) + lambda_*(np.linalg.norm(w, 2)**2)
-    # return np.squeeze(-loss)
-
 
 def compute_gradient_log_loss(y, tx, w, lambda_=0):
     """Computes the gradient at w for a linear model with log loss cost function and L2 regularization.
@@ -48,11 +41,8 @@ def compute_gradient_log_loss(y, tx, w, lambda_=0):
         An array of shape (M, ) (same shape as w), containing the gradient of the loss at w.
     """
     N = len(y)
-    # compute the predictions vector (shape (N,)) with probabilities P(y=1|x)
     prediction = sigmoid(np.dot(tx, w))
-    # compute the gradient of the log loss
     grad_log_loss = 1 / N * np.dot(tx.T, prediction - y)
-    # add the gradient of the regularization term
     grad = grad_log_loss + 2 * lambda_ * w
     return grad
 
@@ -186,13 +176,9 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         loss: the loss value (scalar) for the last iteration of GD
     """
     w = initial_w
-    N = len(y)
     for n_iter in range(max_iters):
-        # compute gradient of log loss
         gradient = compute_gradient_log_loss(y, tx, w)
-        # update w by gradient
         w = w - (gamma * gradient)
-    # compute log loss
     loss = compute_log_loss(y, tx, w)
     return w, loss
 
@@ -211,12 +197,8 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
         loss: the loss value (scalar) for the last iteration of GD
     """
     w = initial_w
-    N = len(y)
     for n_iter in range(max_iters):
-        # compute gradient of log loss
         gradient = compute_gradient_log_loss(y, tx, w, lambda_)
-        # update w by gradient
         w = w - (gamma * gradient)
-    # compute log loss
     loss = compute_log_loss(y, tx, w)
     return w, loss
