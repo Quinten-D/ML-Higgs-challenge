@@ -51,6 +51,19 @@ def accuracy(y, tx, w):
     mistakes = np.count_nonzero(difference)
     return mistakes/len(y)
 
+def compute_Hessian(tx, w):
+    """N = len(tx)
+    # compute diagonal matrix S
+    diagonal = sigmoid(tx.dot(w)) * (np.ones(N)-sigmoid(tx.dot(w)))
+    s = np.diag(diagonal)
+    return np.dot(tx.T, np.dot(s, tx))  # theoretically this needs to be multiplied by 1/N"""
+    pred = sigmoid(tx.dot(w))
+    #print(pred.shape)
+    #print((pred.T[0]).shape)
+    pred = np.diag(pred)
+    r = np.multiply(pred, (1 - pred))
+    return tx.T.dot(r).dot(tx)
+
 
 if __name__ == '__main__':
     ### load project data ###
@@ -75,11 +88,23 @@ if __name__ == '__main__':
                                 0.02513868, 0.08031006, 0.5847512 , 0.13558202, 0.35724844,
                                 0.79922558, 0.40078367, 0.20064134, 0.22376159, 0.64714853,
                                 0.63752236])
-    max_iters = 10
+    max_iters = 2
     gamma = 0.1
 
     ### train the model ###
-    w, loss = logistic_regression(y, tx, initial_weights, max_iters, gamma)
+    #w, loss = logistic_regression(y, tx, initial_weights, max_iters, gamma)
+    w = initial_weights
+    N = len(y)
+    for n_iter in range(max_iters):
+        print("iter: ", n_iter)
+        # compute gradient of log loss
+        gradient = compute_gradient_log_loss(y, tx, w)
+        hessian = compute_Hessian(tx, w)
+        print("hess")
+        # update w by matrix product of inverse Hessian and gradient
+        w = w - (gamma * np.linalg.solve(hessian, gradient))
+    # compute log loss
+    loss = compute_log_loss(y, tx, w)
     print("training loss: ", loss)
 
     ### test the model ###
@@ -96,6 +121,6 @@ if __name__ == '__main__':
     predictions[predictions >= 0.5] = 1
 
     ### make submission csv ###
-    create_csv_submission(test_ids, predictions, "logistic_regression_2.csv")
-    print("csv file made")
+    #create_csv_submission(test_ids, predictions, "logistic_regression_2.csv")
+    #print("csv file made")
 
