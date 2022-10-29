@@ -89,8 +89,8 @@ if __name__ == '__main__':
                                 0.79922558, 0.40078367, 0.20064134, 0.22376159, 0.64714853,
                                 0.63752236])
     max_iters = 2
-    gamma = 0.1
-    batch_size = 32
+    gamma = 0.001
+    batch_size = 50
 
     ### train the model ###
     #w, loss = logistic_regression(y, tx, initial_weights, max_iters, gamma)
