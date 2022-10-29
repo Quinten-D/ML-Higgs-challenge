@@ -1,5 +1,5 @@
-
 from helpers import *
+
 
 def sigmoid(x):
     """
@@ -9,7 +9,8 @@ def sigmoid(x):
     Returns:
         sgmd(x): numpy array of shape=(N, ). ith entry = sigmoid(x[i])
     """
-    return 1/(1+np.exp(-x))
+    return 1 / (1 + np.exp(-x))
+
 
 def compute_log_loss(y, tx, w, lambda_=0):
     """Calculate the log loss + L2 norm regularization term
@@ -25,13 +26,16 @@ def compute_log_loss(y, tx, w, lambda_=0):
     # compute the predictions vector (shape (N,)) with probabilities P(y=1|x)
     prediction = sigmoid(np.dot(tx, w))
     # compute the log loss !
-    loss_vector = y*np.log(prediction) + (np.ones(N)-y)*np.log(np.ones(N)-prediction)
-    loss = -1/(N**2)*np.sum(loss_vector) + lambda_*(np.linalg.norm(w, 2)**2)
+    loss_vector = y * np.log(prediction) + (np.ones(N) - y) * np.log(
+        np.ones(N) - prediction
+    )
+    loss = -1 / (N**2) * np.sum(loss_vector) + lambda_ * (np.linalg.norm(w, 2) ** 2)
     return loss
     # N = len(y)
     # pred = sigmoid(tx.dot(w))
     # loss = 1/2*(np.ones(N)+y).T.dot(np.log(pred)) + 1/2*(np.ones(N)-y).T.dot(np.log(1 - pred)) + lambda_*(np.linalg.norm(w, 2)**2)
     # return np.squeeze(-loss)
+
 
 def compute_gradient_log_loss(y, tx, w, lambda_=0):
     """Computes the gradient at w for a linear model with log loss cost function and L2 regularization.
@@ -47,10 +51,11 @@ def compute_gradient_log_loss(y, tx, w, lambda_=0):
     # compute the predictions vector (shape (N,)) with probabilities P(y=1|x)
     prediction = sigmoid(np.dot(tx, w))
     # compute the gradient of the log loss
-    grad_log_loss = 1/N * np.dot(tx.T, prediction-y)
+    grad_log_loss = 1 / N * np.dot(tx.T, prediction - y)
     # add the gradient of the regularization term
-    grad = grad_log_loss + 2*lambda_*w
+    grad = grad_log_loss + 2 * lambda_ * w
     return grad
+
 
 def compute_MSE(y, tx, w):
     """Calculate the loss using MSE
@@ -61,17 +66,19 @@ def compute_MSE(y, tx, w):
     Returns:
         the value of the loss (a scalar), corresponding to the input parameters w.
     """
-    w = w.reshape((len(w),1))
+    w = w.reshape((len(w), 1))
     y = np.reshape(y, (len(y), 1))
     e = np.square(y - np.matmul(tx, w))
     N = len(y)
-    loss = (1/(2*N)) * np.sum(e, axis=0)
+    loss = (1 / (2 * N)) * np.sum(e, axis=0)
     return loss[0]
+
 
 def gradient_descent_Charbel(y, tx, initial_w, max_iters, gamma):
     """
     implementations charbel
     """
+
     def compute_gradient(y, tx, w):
         N = y.shape[0]
         e = y - np.dot(tx, w)
@@ -86,10 +93,13 @@ def gradient_descent_Charbel(y, tx, initial_w, max_iters, gamma):
     return w, loss
 
 
-def stochastic_gradient_descent_Charbel(y, tx, initial_w, max_iters, gamma, batch_size = 1):
+def stochastic_gradient_descent_Charbel(
+    y, tx, initial_w, max_iters, gamma, batch_size=1
+):
     """
     implementations charbel
     """
+
     def compute_stoch_gradient(y, tx, w):
         N = y.shape[0]
         e = y - np.dot(tx, w)
@@ -106,6 +116,7 @@ def stochastic_gradient_descent_Charbel(y, tx, initial_w, max_iters, gamma, batc
 
     return w, loss
 
+
 def least_squares_Charbel(y, tx):
     """
     implementations charbel
@@ -116,6 +127,7 @@ def least_squares_Charbel(y, tx):
     MSE = compute_MSE(y, tx, w)
 
     return w, MSE
+
 
 def ridge_regression_Charbel(y, tx, lambda_):
     """
@@ -128,6 +140,7 @@ def ridge_regression_Charbel(y, tx, lambda_):
     w = np.dot(np.dot(np.linalg.inv(XtX_Lambda), tx.T), y)
     return w, compute_MSE(y, tx, w)
 
+
 # Linear Regression using Gradient Descent
 def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
     """
@@ -136,13 +149,17 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
 
     return gradient_descent_Charbel(y, tx, initial_w, max_iters, gamma)
 
+
 # Linear Regression using Stochastic Gradient Descent
-def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma, batch_size = 1):
+def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma, batch_size=1):
     """
     implementations charbel
     """
 
-    return stochastic_gradient_descent_Charbel(y, tx, initial_w, max_iters, gamma, batch_size)
+    return stochastic_gradient_descent_Charbel(
+        y, tx, initial_w, max_iters, gamma, batch_size
+    )
+
 
 # Least Squares Regression using Normal Equations
 def least_squares(y, tx):
@@ -152,6 +169,7 @@ def least_squares(y, tx):
 
     return least_squares_Charbel(y, tx)
 
+
 # Ridge Regression using Normal Equations
 def ridge_regression(y, tx, lambda_):
     """
@@ -159,6 +177,7 @@ def ridge_regression(y, tx, lambda_):
     """
 
     return ridge_regression_Charbel(y, tx, lambda_)
+
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
     """logistic regression using SGD
@@ -184,12 +203,13 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         # # compute stochastic gradient
         gradient = compute_gradient_log_loss(y, tx, w)
         # update w by gradient
-        w = w-(gamma*gradient)
+        w = w - (gamma * gradient)
     # compute log loss
     loss = compute_log_loss(y, tx, w)
     return w, loss
 
-def reg_logistic_regression(y, tx, lambda_ , initial_w, max_iters, gamma):
+
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     """logistic regression with regularization term using SGD
     Args:
         y: shape=(N, )
@@ -214,10 +234,11 @@ def reg_logistic_regression(y, tx, lambda_ , initial_w, max_iters, gamma):
         # # compute stochastic gradient
         gradient = compute_gradient_log_loss(y, tx, w, lambda_)
         # update w by gradient
-        w = w-(gamma*gradient)
+        w = w - (gamma * gradient)
     # compute log loss
     loss = compute_log_loss(y, tx, w)
     return w, loss
+
 
 def trainModel():
     """
@@ -228,6 +249,7 @@ def trainModel():
     tx = build_model_data(features)
     w, mse = least_squares(y, tx)
     return w, mse
+
 
 def runModel():
     """
@@ -246,7 +268,5 @@ def runModel():
 
     create_submission(ids, y, "out.txt")
 
-#runModel()
 
-
-
+# runModel()
