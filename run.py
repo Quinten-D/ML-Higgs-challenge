@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-from helpers import *
+from utils import *
 from implementations import *
 import matplotlib as plt
 
 def trainModel():
     """
-    implementations charbel
+    Trains the model using the training data
+    Returns the trained weights, the MSE and the features that were not deemed useful
     """
 
     y, features, ids, removed_features = load_training_data()
@@ -15,7 +16,7 @@ def trainModel():
 
 def runModel():
     """
-    implementations charbel
+    Trains the model and then run it on a test set to predict the results
     """
 
     w, mse_train, removed_features = trainModel()
@@ -28,8 +29,11 @@ def runModel():
     create_csv_submission(ids, y, "out.txt")
 
 
-#Shows the most frequent values of each feature
 def plot_feature_histogram():
+    """
+    Shows the most frequent values of each feature
+    """
+
     y, features, ids, removed_features = load_training_data()
     x = np.array([j for j in range(features.shape[0])])
 

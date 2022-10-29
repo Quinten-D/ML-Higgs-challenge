@@ -3,40 +3,6 @@
 import numpy as np
 import csv
 
-def load_old_data(sub_sample=True, add_outlier=False):
-    """Load data and convert it to the metric system."""
-    path_dataset = "Data/height_weight_genders.csv"
-    data = np.genfromtxt(
-        path_dataset, delimiter=",", skip_header=1, usecols=[1, 2])
-    height = data[:, 0]
-    weight = data[:, 1]
-    gender = np.genfromtxt(
-        path_dataset, delimiter=",", skip_header=1, usecols=[0],
-        converters={0: lambda x: 0 if b"Male" in x else 1})
-    # Convert to metric system
-    height *= 0.025
-    weight *= 0.454
-
-    # sub-sample
-    if sub_sample:
-        height = height[::50]
-        weight = weight[::50]
-
-    if add_outlier:
-        # outlier experiment
-        height = np.concatenate([height, [1.1, 1.2]])
-        weight = np.concatenate([weight, [51.5 / 0.454, 55.3 / 0.454]])
-
-    return height, weight, gender
-
-def build_old_model_data(height, weight):
-    """Form (y,tX) to get regression data in matrix form."""
-    y = weight
-    x = height
-    num_samples = len(y)
-    tx = np.c_[np.ones(num_samples), x]
-    return y, tx
-
 def create_csv_submission(ids, y_pred, name):
     """
     Creates an output file in .csv format for submission to Kaggle or AIcrowd
@@ -69,59 +35,6 @@ def load_csv_data(data_path, sub_sample=False):
         ids = ids[::50]
 
     return yb, input_data, ids
-
-
-def preprocess_train_data(input_data):
-    processed_data = []
-    removed_features = {}
-
-    num_samples = input_data.shape[0]
-    for i in range(input_data.shape[1]):
-        cur_feature = input_data[:, i]
-
-        # Remove features with a lot of missing entries
-        unavailable_cnt = np.sum(cur_feature == -999)
-        if unavailable_cnt * 1.5 > num_samples:
-            removed_features[i] = 1
-            continue
-
-        # Replace missing entries with the mean of available entries then standardize
-        cur_feature[cur_feature == -999] = np.mean(cur_feature[cur_feature != -999])
-        standardize(cur_feature)
-
-        processed_data.append(cur_feature)
-
-    return np.array(processed_data).T, removed_features
-
-def preprocess_test_data(input_data, removed_features):
-    processed_data = []
-
-    print(len(removed_features))
-
-    for i in range(input_data.shape[1]):
-        if i in removed_features:
-            continue
-
-        cur_feature = input_data[:, i]
-
-        # Replace missing entries with the mean of available entries then standardize
-        cur_feature[cur_feature == -999] = np.mean(cur_feature[cur_feature != -999])
-        standardize(cur_feature)
-
-        processed_data.append(cur_feature)
-
-    return np.array(processed_data).T
-
-def load_training_data():
-    yb, input_data, ids = load_csv_data("Data/train.csv")
-    processed_data, removed_features = preprocess_train_data(input_data)
-    return yb, processed_data, ids, removed_features
-
-def load_test_data(removed_features):
-    yb, input_data, ids = load_csv_data("Data/test.csv")
-    processed_data = preprocess_test_data(input_data, removed_features)
-    return yb, processed_data, ids
-
 
 def standardize(x):
     """Standardize the original data set."""
