@@ -57,12 +57,12 @@ def compute_Hessian(tx, w):
     diagonal = sigmoid(tx.dot(w)) * (np.ones(N)-sigmoid(tx.dot(w)))
     s = np.diag(diagonal)
     return np.dot(tx.T, np.dot(s, tx))  # theoretically this needs to be multiplied by 1/N"""
-    pred = sigmoid(tx.dot(w))
+    prediction = sigmoid(tx.dot(w))
     #print(pred.shape)
     #print((pred.T[0]).shape)
-    pred = np.diag(pred)
-    r = np.multiply(pred, (1 - pred))
-    return tx.T.dot(r).dot(tx)
+    prediction = np.diag(prediction)
+    s = np.multiply(prediction, (1 - prediction))
+    return tx.T.dot(s).dot(tx)
 
 
 if __name__ == '__main__':
@@ -90,20 +90,27 @@ if __name__ == '__main__':
                                 0.63752236])
     max_iters = 2
     gamma = 0.1
+    batch_size = 32
 
     ### train the model ###
     #w, loss = logistic_regression(y, tx, initial_weights, max_iters, gamma)
     w = initial_weights
     N = len(y)
     for n_iter in range(max_iters):
-        print("iter: ", n_iter)
-        # compute gradient of log loss
-        gradient = compute_gradient_log_loss(y, tx, w)
-        hessian = compute_Hessian(tx, w)
-        print("hess")
+        print("iter ", n_iter)
+        # choose batch_size data points
+        data_points = np.random.randint(0, N, size=batch_size)
+        # pick out the datapoints
+        x_batch = tx[data_points]
+        y_batch = y[data_points]
+        # compute stochastic gradient
+        stochastic_gradient = compute_gradient_log_loss(y_batch, x_batch, w)
+        print("h")
+        hessian = compute_Hessian(x_batch, w)
         # update w by matrix product of inverse Hessian and gradient
-        w = w - (gamma * np.linalg.solve(hessian, gradient))
-    # compute log loss
+        h_in = np.linalg.inv(hessian)
+        w = w - (gamma * np.linalg.solve(hessian, stochastic_gradient))
+    # compute mse loss
     loss = compute_log_loss(y, tx, w)
     print("training loss: ", loss)
 
