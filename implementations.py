@@ -197,7 +197,7 @@ def ridge_regression(y, tx, lambda_):
     return w, loss
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
-    """logistic regression using SGD
+    """logistic regression using GD
 
     Args:
         y: shape=(N, )
@@ -211,25 +211,17 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         loss: the loss value (scalar) for the last iteration of GD
     """
     w = initial_w
-    N = len(y)
-    batch_size = 1
     for n_iter in range(max_iters):
-        # choose batch_size data points
-        data_points = np.random.randint(0, N, size=batch_size)
-        # pick out the datapoints
-        x_batch = tx[data_points]
-        y_batch = y[data_points]
-        # compute stochastic gradient
-        stochastic_gradient = compute_gradient_log_loss(y_batch, x_batch, w)
+        gradient = compute_gradient_log_loss(y, tx, w)
         # update w by gradient
-        w = w-(gamma*stochastic_gradient)
+        w = w - (gamma * gradient)
     # compute log loss
     loss = compute_log_loss(y, tx, w)
-    #loss = compute_MSE_loss(y, tx, w)
     return w, loss
 
+
 def reg_logistic_regression(y, tx, lambda_ , initial_w, max_iters, gamma):
-    """logistic regression with regularization term using SGD
+    """logistic regression with regularization term using GD
 
     Args:
         y: shape=(N, )
@@ -244,19 +236,10 @@ def reg_logistic_regression(y, tx, lambda_ , initial_w, max_iters, gamma):
         loss: the loss value (scalar) for the last iteration of GD
     """
     w = initial_w
-    N = len(y)
-    batch_size = 1
     for n_iter in range(max_iters):
-        # choose batch_size data points
-        data_points = np.random.randint(0, N, size=batch_size)
-        # pick out the datapoints
-        x_batch = tx[data_points]
-        y_batch = y[data_points]
-        # compute stochastic gradient
-        stochastic_gradient = compute_gradient_log_loss(y_batch, x_batch, w, lambda_)
+        gradient = compute_gradient_log_loss(y, tx, w, lambda_)
         # update w by gradient
-        w = w-(gamma*stochastic_gradient)
+        w = w - (gamma * gradient)
     # compute log loss
-    loss = compute_log_loss(y, tx, w, 0)
-    #loss = compute_MSE_loss(y, tx, w)
+    loss = compute_log_loss(y, tx, w)
     return w, loss
