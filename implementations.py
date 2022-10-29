@@ -101,20 +101,21 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
     loss = compute_MSE(y, tx, w)
     return w, loss
 
+
 # Linear Regression using Stochastic Gradient Descent
-def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma, batch_size = 1):
+def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma, batch_size=1):
     """The Stochastic Gradient Descent algorithm (SGD) for a linear model using the MSE loss funtion.
-       Args:
-           y: shape=(N, )
-           tx: shape=(N,M)
-           initial_w: shape=(M, ). The initial guess (or the initialization) for the model parameters
-           max_iters: a scalar denoting the total number of iterations of SGD
-           gamma: a scalar denoting the stepsize
-           batch_size: a scalar denoting the number of data points in a mini-batch used for computing the stochastic gradient
-       Returns:
-           w: the model parameters for the last iteration of SGD
-           loss: the loss value (scalar) of the last iteration of SGD
-       """
+    Args:
+        y: shape=(N, )
+        tx: shape=(N,M)
+        initial_w: shape=(M, ). The initial guess (or the initialization) for the model parameters
+        max_iters: a scalar denoting the total number of iterations of SGD
+        gamma: a scalar denoting the stepsize
+        batch_size: a scalar denoting the number of data points in a mini-batch used for computing the stochastic gradient
+    Returns:
+        w: the model parameters for the last iteration of SGD
+        loss: the loss value (scalar) of the last iteration of SGD
+    """
 
     def compute_stoch_gradient(y, tx, w):
         N = y.shape[0]
@@ -132,23 +133,25 @@ def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma, batch_size = 1):
 
     return w, loss
 
+
 # Least Squares Regression using Normal Equations
 def least_squares(y, tx):
     """Calculate the least squares solution by solving the normal equations.
-          returns optimal weights and mse.
-       Args:
-           y: numpy array of shape (N,), N is the number of samples.
-           tx: numpy array of shape (N,D), D is the number of features.
-       Returns:
-           w: optimal weights, numpy array of shape(D,), D is the number of features.
-           loss: scalar, the mse loss of the model with weights w.
-       """
+       returns optimal weights and mse.
+    Args:
+        y: numpy array of shape (N,), N is the number of samples.
+        tx: numpy array of shape (N,D), D is the number of features.
+    Returns:
+        w: optimal weights, numpy array of shape(D,), D is the number of features.
+        loss: scalar, the mse loss of the model with weights w.
+    """
 
     XtX = np.dot(tx.T, tx)
     w = np.dot(np.dot(np.linalg.inv(XtX), tx.T), y)
     loss = compute_MSE(y, tx, w)
 
     return w, loss
+
 
 # Ridge Regression using Normal Equations
 def ridge_regression(y, tx, lambda_):
@@ -170,9 +173,8 @@ def ridge_regression(y, tx, lambda_):
     return w, loss
 
 
-
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
-    """logistic regression using SGD
+    """logistic regression using GD
     Args:
         y: shape=(N, )
         tx: shape=(N,M)
@@ -185,14 +187,8 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     """
     w = initial_w
     N = len(y)
-    batch_size = 1
     for n_iter in range(max_iters):
-        # # choose batch_size data points
-        # data_points = np.random.randint(0, N, size=batch_size)
-        # # pick out the datapoints
-        # x_batch = tx[data_points]
-        # y_batch = y[data_points]
-        # # compute stochastic gradient
+        # compute gradient of log loss
         gradient = compute_gradient_log_loss(y, tx, w)
         # update w by gradient
         w = w - (gamma * gradient)
@@ -202,7 +198,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
 
 
 def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
-    """logistic regression with regularization term using SGD
+    """logistic regression with regularization term using GD
     Args:
         y: shape=(N, )
         tx: shape=(N,M)
@@ -216,18 +212,11 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     """
     w = initial_w
     N = len(y)
-    batch_size = 1
     for n_iter in range(max_iters):
-        # # choose batch_size data points
-        # data_points = np.random.randint(0, N, size=batch_size)
-        # # pick out the datapoints
-        # x_batch = tx[data_points]
-        # y_batch = y[data_points]
-        # # compute stochastic gradient
+        # compute gradient of log loss
         gradient = compute_gradient_log_loss(y, tx, w, lambda_)
         # update w by gradient
         w = w - (gamma * gradient)
     # compute log loss
     loss = compute_log_loss(y, tx, w)
     return w, loss
-

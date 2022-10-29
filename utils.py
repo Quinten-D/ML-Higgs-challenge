@@ -23,6 +23,7 @@ def preprocess_train_data(input_data):
 
     return np.array(processed_data).T, removed_features
 
+
 def preprocess_test_data(input_data, removed_features):
     processed_data = []
 
@@ -42,13 +43,14 @@ def preprocess_test_data(input_data, removed_features):
 
     return np.array(processed_data).T
 
+
 def load_training_data():
     yb, input_data, ids = load_csv_data("Data/train.csv")
     processed_data, removed_features = preprocess_train_data(input_data)
     return yb, processed_data, ids, removed_features
 
+
 def load_test_data(removed_features):
     yb, input_data, ids = load_csv_data("Data/test.csv")
     processed_data = preprocess_test_data(input_data, removed_features)
     return yb, processed_data, ids
-

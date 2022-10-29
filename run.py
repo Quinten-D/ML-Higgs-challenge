@@ -3,6 +3,7 @@ from utils import *
 from implementations import *
 import matplotlib as plt
 
+
 def trainModel():
     """
     Trains the model using the training data
@@ -13,6 +14,7 @@ def trainModel():
     tx = build_model_data(features)
     w, mse = least_squares(y, tx)
     return w, mse, removed_features
+
 
 def runModel():
     """
@@ -41,5 +43,6 @@ def plot_feature_histogram():
     for i in range(20):
         plt.hist(features[:, i])
         plt.show()
+
 
 runModel()
