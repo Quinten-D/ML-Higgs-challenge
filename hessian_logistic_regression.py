@@ -87,7 +87,6 @@ if __name__ == '__main__':
     batch_size = 128
 
     ### train the model ###
-    #w, loss = logistic_regression(y, tx, initial_weights, max_iters, gamma)
     w = initial_weights
     N = len(y)
     for n_iter in range(max_iters):
@@ -99,13 +98,15 @@ if __name__ == '__main__':
         # pick out the datapoints
         x_batch = tx[data_points]
         y_batch = y[data_points]
-        # compute stochastic gradient
-        #stochastic_gradient = compute_gradient_log_loss(y_batch, x_batch, w)
-        stochastic_gradient = compute_gradient_log_loss(y, tx, w)
-        hessian = compute_Hessian(x_batch, w)
+        # compute gradient
+        gradient = compute_gradient_log_loss(y, tx, w)
+        # compute stochastic Hessian
+        stochastic_hessian = compute_Hessian(x_batch, w)
         # update w by matrix product of inverse Hessian and gradient
-        w = w - (gamma * batch_size * np.dot(np.linalg.inv(hessian), stochastic_gradient))
-    # compute mse loss
+        # because hessian wasn't multiplied with 1/batch size (for practical reasons), the inverse Hessian is
+        # actually 1/batch_size * inverse Hessian, therefore we need to multiply it with batch_size to get the actual inverse Hessian
+        w = w - (gamma * batch_size * np.dot(np.linalg.inv(stochastic_hessian), gradient))
+    # compute log loss
     loss = compute_log_loss(y, tx, w)
     print("training loss: ", loss)
 
