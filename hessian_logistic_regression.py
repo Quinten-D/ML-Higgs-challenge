@@ -57,12 +57,6 @@ def compute_Hessian(tx, w):
     diagonal = sigmoid(tx.dot(w)) * (np.ones(N)-sigmoid(tx.dot(w)))
     s = np.diag(diagonal)
     return np.dot(tx.T, np.dot(s, tx))  # theoretically this needs to be multiplied by 1/N
-    """prediction = sigmoid(tx.dot(w))
-    #print(pred.shape)
-    #print((pred.T[0]).shape)
-    prediction = np.diag(prediction)
-    s = np.multiply(prediction, (1 - prediction))
-    return tx.T.dot(s).dot(tx)"""
 
 
 if __name__ == '__main__':
@@ -90,7 +84,7 @@ if __name__ == '__main__':
                                 0.63752236])
     max_iters = 10
     gamma = 0.001
-    batch_size = 100
+    batch_size = 128
 
     ### train the model ###
     #w, loss = logistic_regression(y, tx, initial_weights, max_iters, gamma)
