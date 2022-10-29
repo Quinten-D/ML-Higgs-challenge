@@ -1,3 +1,9 @@
 __pycache__/
 Data/
 .idea/
+/height_weight_genders.csv
+/least_squares_1.csv
+/logistic_regression_1.csv
+/sample-submission.csv
+/test.csv
+/train.csv
