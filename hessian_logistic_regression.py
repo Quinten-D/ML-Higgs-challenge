@@ -3,7 +3,7 @@ from helpers_higgs import *
 #from helpers import *
 
 
-### handy functions
+### handy functions ###
 def load_csv_data_logistic(data_path, sub_sample=False):
     """Loads data and returns y (class labels), tX (features) and ids (event ids)"""
     y = np.genfromtxt(data_path, delimiter=",", skip_header=1, dtype=str, usecols=1)
@@ -89,10 +89,11 @@ if __name__ == '__main__':
     ### train the model ###
     w = initial_weights
     N = len(y)
+    print("START TRAINING")
     for n_iter in range(max_iters):
-        print("iter ", n_iter)
-        loss = compute_log_loss(y, tx, w)
-        print("training loss: ", loss)
+        print("iteration:  ", n_iter)
+        loss = compute_log_loss(y_test, tx_test, w)
+        print("test loss: ", loss, "\n")
         # choose batch_size data points
         data_points = np.random.randint(0, N, size=batch_size)
         # pick out the datapoints
@@ -108,17 +109,18 @@ if __name__ == '__main__':
         w = w - (gamma * batch_size * np.dot(np.linalg.inv(stochastic_hessian), gradient))
     # compute log loss
     loss = compute_log_loss(y, tx, w)
-    print("training loss: ", loss)
+    print("final training loss: ", loss)
 
     ### test the model ###
     test_loss = compute_log_loss(y_test, tx_test, w)
     accuracy = accuracy(y_test, tx_test, w)
-    print("test loss: ", test_loss)
+    print("final test loss: ", test_loss)
     print("accuracy on test data: ", accuracy)
+    print("final weights: ", w, "\n")
 
     ### load the official test data ###
     test_features, _, test_ids = load_test_data()
-    tx = build_model_data(test_features)
+    tx = build_model_data(standardize(test_features)[0])
     predictions = sigmoid(tx.dot(w))
     predictions[predictions < 0.5] = -1
     predictions[predictions >= 0.5] = 1

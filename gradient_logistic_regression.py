@@ -90,7 +90,7 @@ if __name__ == '__main__':
 
     ### load the official test data ###
     test_features, _, test_ids = load_test_data()
-    tx = build_model_data(test_features)
+    tx = build_model_data(standardize(test_features)[0])
     predictions = sigmoid(tx.dot(w))
     predictions[predictions < 0.5] = -1
     predictions[predictions >= 0.5] = 1
