@@ -1,6 +1,7 @@
 from helpers import *
 import matplotlib as plt
 
+
 def preprocess_train_data(input_data):
     """
     Does 3 things:
@@ -86,7 +87,7 @@ def load_training_data(using_logistic_regression=False):
     if using_logistic_regression:
         yb[yb == -1] = 0
 
-    #Divide dataset into 3 groups according to PRI_jet_num
+    # Divide dataset into 3 groups according to PRI_jet_num
     yb0, yb1, yb23 = [], [], []
     input_data0, input_data1, input_data23 = [], [], []
 
@@ -110,13 +111,22 @@ def load_training_data(using_logistic_regression=False):
     input_data1 = np.array(input_data1)
     input_data23 = np.array(input_data23)
 
-    processed_data0, removed_features0, means0, stds0 = preprocess_train_data(input_data0)
-    processed_data1, removed_features1, means1, stds1 = preprocess_train_data(input_data1)
-    processed_data23, removed_features23, means23, stds23 = preprocess_train_data(input_data23)
+    processed_data0, removed_features0, means0, stds0 = preprocess_train_data(
+        input_data0
+    )
+    processed_data1, removed_features1, means1, stds1 = preprocess_train_data(
+        input_data1
+    )
+    processed_data23, removed_features23, means23, stds23 = preprocess_train_data(
+        input_data23
+    )
 
-    return (yb0, processed_data0, removed_features0, means0, stds0), \
-           (yb1, processed_data1, removed_features1, means1, stds1), \
-           (yb23, processed_data23, removed_features23, means23, stds23)
+    return (
+        (yb0, processed_data0, removed_features0, means0, stds0),
+        (yb1, processed_data1, removed_features1, means1, stds1),
+        (yb23, processed_data23, removed_features23, means23, stds23),
+    )
+
 
 def load_test_data(all_removed_features, all_means, all_stds):
     """
@@ -157,7 +167,11 @@ def load_test_data(all_removed_features, all_means, all_stds):
 
     idx = 0
     for cur_input_data in [input_data0, input_data1, input_data23]:
-        all_processed_data.append(preprocess_test_data(cur_input_data, all_removed_features[idx], all_means[idx], all_stds[idx]))
+        all_processed_data.append(
+            preprocess_test_data(
+                cur_input_data, all_removed_features[idx], all_means[idx], all_stds[idx]
+            )
+        )
         idx += 1
 
     return all_processed_data, [ids0, ids1, ids23]

@@ -30,6 +30,7 @@ def compute_log_loss(y, tx, w, lambda_=0):
     loss = -1 / (N**2) * np.sum(loss_vector) + lambda_ * (np.linalg.norm(w, 2) ** 2)
     return loss
 
+
 def compute_gradient_log_loss(y, tx, w, lambda_=0):
     """Computes the gradient at w for a linear model with log loss cost function and L2 regularization.
     Args:

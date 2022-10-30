@@ -4,13 +4,9 @@ from implementations import *
 GAMMA = 0.1
 MAX_ITERS = 2
 
-y = np.array([[0.],
-              [1.],
-              [1.]])
-tx = np.array([[2.3, 3.2],
-               [1., 0.1],
-               [1.4, 2.3]])
-initial_w = np.array([[0.5], [1.]])
+y = np.array([[0.0], [1.0], [1.0]])
+tx = np.array([[2.3, 3.2], [1.0, 0.1], [1.4, 2.3]])
+initial_w = np.array([[0.5], [1.0]])
 
 lambda_ = 1.0
 expected_w = np.array([[0.409111], [0.843996]])

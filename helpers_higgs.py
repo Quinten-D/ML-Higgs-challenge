@@ -3,16 +3,20 @@
 import numpy as np
 import csv
 
+
 def load_old_data(sub_sample=True, add_outlier=False):
     """Load data and convert it to the metric system."""
     path_dataset = "Data/height_weight_genders.csv"
-    data = np.genfromtxt(
-        path_dataset, delimiter=",", skip_header=1, usecols=[1, 2])
+    data = np.genfromtxt(path_dataset, delimiter=",", skip_header=1, usecols=[1, 2])
     height = data[:, 0]
     weight = data[:, 1]
     gender = np.genfromtxt(
-        path_dataset, delimiter=",", skip_header=1, usecols=[0],
-        converters={0: lambda x: 0 if b"Male" in x else 1})
+        path_dataset,
+        delimiter=",",
+        skip_header=1,
+        usecols=[0],
+        converters={0: lambda x: 0 if b"Male" in x else 1},
+    )
     # Convert to metric system
     height *= 0.025
     weight *= 0.454
@@ -29,6 +33,7 @@ def load_old_data(sub_sample=True, add_outlier=False):
 
     return height, weight, gender
 
+
 def build_old_model_data(height, weight):
     """Form (y,tX) to get regression data in matrix form."""
     y = weight
@@ -38,17 +43,23 @@ def build_old_model_data(height, weight):
     return y, tx
 
 
-
 def load_data(path_dataset):
-    ids = np.genfromtxt(
-        path_dataset, delimiter=",", skip_header=1, usecols=[0])
+    ids = np.genfromtxt(path_dataset, delimiter=",", skip_header=1, usecols=[0])
 
     output = np.genfromtxt(
-        path_dataset, delimiter=",", skip_header=1, usecols=[1],
-        converters={1: lambda x: 0 if b"s" in x else 1})
+        path_dataset,
+        delimiter=",",
+        skip_header=1,
+        usecols=[1],
+        converters={1: lambda x: 0 if b"s" in x else 1},
+    )
 
     data = np.genfromtxt(
-        path_dataset, delimiter=",", skip_header=1, usecols=[col for col in range(2, 32)])
+        path_dataset,
+        delimiter=",",
+        skip_header=1,
+        usecols=[col for col in range(2, 32)],
+    )
 
     features = []
     for i in range(0, 30):
@@ -59,19 +70,23 @@ def load_data(path_dataset):
 
     return np.array(features).T, np.array(output), np.array(ids)
 
+
 def load_training_data():
     return load_data("train.csv")
+
 
 def load_test_data():
     return load_data("test.csv")
 
+
 def create_submission(ids, y_pred, outputFileName):
-    with open(outputFileName, 'w') as csvfile:
-        fieldnames = ['Id', 'Prediction']
+    with open(outputFileName, "w") as csvfile:
+        fieldnames = ["Id", "Prediction"]
         writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
         writer.writeheader()
         for r1, r2 in zip(ids, y_pred):
-            writer.writerow({'Id':int(r1),'Prediction':int(r2)})
+            writer.writerow({"Id": int(r1), "Prediction": int(r2)})
+
 
 def standardize(x):
     """Standardize the original data set."""

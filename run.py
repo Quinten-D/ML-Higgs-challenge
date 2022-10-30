@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from utils import *
 from implementations import *
+from tuned_logistic import *
+
 
 def train_model_least_squares(yb, tx):
     """
@@ -10,26 +12,56 @@ def train_model_least_squares(yb, tx):
 
     return least_squares(yb, tx)
 
+
 def train_model_logistic_regression(yb, tx):
     """
     Trains the model using Logistic Regression
     Returns the trained weights, MSE
     """
 
-    initial_weights = np.array([0.46756248, 0.82084076, 0.13473604, 0.06748474, 0.08071737,
-                                0.89997862, 0.99040634, 0.88295851, 0.56703793, 0.25140082,
-                                0.81367198, 0.48045343, 0.26640933, 0.90796936, 0.48122395,
-                                0.77356115, 0.55607271, 0.96981431, 0.29737622, 0.90175285,
-                                0.02513868, 0.08031006, 0.5847512, 0.13558202, 0.35724844,
-                                0.79922558, 0.40078367, 0.20064134, 0.22376159, 0.64714853,
-                                0.63752236])
+    initial_weights = np.array(
+        [
+            0.46756248,
+            0.82084076,
+            0.13473604,
+            0.06748474,
+            0.08071737,
+            0.89997862,
+            0.99040634,
+            0.88295851,
+            0.56703793,
+            0.25140082,
+            0.81367198,
+            0.48045343,
+            0.26640933,
+            0.90796936,
+            0.48122395,
+            0.77356115,
+            0.55607271,
+            0.96981431,
+            0.29737622,
+            0.90175285,
+            0.02513868,
+            0.08031006,
+            0.5847512,
+            0.13558202,
+            0.35724844,
+            0.79922558,
+            0.40078367,
+            0.20064134,
+            0.22376159,
+            0.64714853,
+            0.63752236,
+        ]
+    )
 
-    initial_weights = initial_weights[:tx.shape[1]]
+    initial_weights = initial_weights[: tx.shape[1]]
 
     max_iters = 100
     gamma = 0.1
 
     return logistic_regression(yb, tx, initial_weights, max_iters, gamma)
+
 
 def train_model():
     """
@@ -38,19 +70,31 @@ def train_model():
     the trained weights, the features that were not deemed useful, the mean of the kept features
     """
 
-    (yb0, processed_data0, removed_features0, means0, stds0), \
-    (yb1, processed_data1, removed_features1, means1, stds1), \
-    (yb23, processed_data23, removed_features23, means23, stds23) = load_training_data(using_logistic_regression=False)
+    (
+        (yb0, processed_data0, removed_features0, means0, stds0),
+        (yb1, processed_data1, removed_features1, means1, stds1),
+        (yb23, processed_data23, removed_features23, means23, stds23),
+    ) = load_training_data(using_logistic_regression=False)
 
     all_w = []
     all_removed_features = []
     all_means = []
     all_stds = []
-    for (yb, processed_data, removed_features, means, stds) in [(yb0, processed_data0, removed_features0, means0, stds0),
-                                                          (yb1, processed_data1, removed_features1, means1, stds1),
-                                                          (yb23, processed_data23, removed_features23, means23, stds23)]:
+    for (yb, processed_data, removed_features, means, stds) in [
+        (yb0, processed_data0, removed_features0, means0, stds0),
+        (yb1, processed_data1, removed_features1, means1, stds1),
+        (yb23, processed_data23, removed_features23, means23, stds23),
+    ]:
         tx = build_model_data(processed_data)
-        w, loss = train_model_least_squares(yb, tx)
+        # w, loss = train_model_least_squares(yb, tx)
+        w, loss, lambda_ = cross_validation_tuning(
+            yb,
+            tx,
+            k_fold=4,
+            lambda_grid=np.arange(0.1, 2, 50),
+            max_iters=100,
+            gamma=0.1,
+        )
 
         all_w.append(w)
         all_removed_features.append(removed_features)
@@ -66,7 +110,9 @@ def runModel():
     """
 
     all_w, all_removed_features, all_means, all_stds = train_model()
-    all_processed_data, all_ids = load_test_data(all_removed_features, all_means, all_stds)
+    all_processed_data, all_ids = load_test_data(
+        all_removed_features, all_means, all_stds
+    )
 
     id_prediction_pairs = []
     for i in range(3):
