@@ -1,6 +1,7 @@
 from implementations import *
 from helpers_higgs import *
-#from helpers import *
+
+# from helpers import *
 
 
 ### handy functions ###
@@ -20,6 +21,7 @@ def load_csv_data_logistic(data_path, sub_sample=False):
         ids = ids[::50]
     return yb, input_data, ids
 
+
 def create_csv_submission(ids, y_pred, name):
     """
     Creates an output file in .csv format for submission to Kaggle or AIcrowd
@@ -34,6 +36,7 @@ def create_csv_submission(ids, y_pred, name):
         for r1, r2 in zip(ids, y_pred):
             writer.writerow({"Id": int(r1), "Prediction": int(r2)})
 
+
 def preproces(input_data):
     features = []
     for i in range(0, 30):
@@ -43,29 +46,37 @@ def preproces(input_data):
         features.append(curFeature)
     return np.array(features).T
 
+
 def accuracy(y, tx, w):
     predictions = sigmoid(np.dot(tx, w))
     predictions[predictions < 0.5] = 0
     predictions[predictions >= 0.5] = 1
-    difference = y-predictions
+    difference = y - predictions
     mistakes = np.count_nonzero(difference)
-    return (len(y)-mistakes)/len(y)
+    return (len(y) - mistakes) / len(y)
+
 
 def compute_Hessian(tx, w):
     N = len(tx)
     # compute diagonal matrix S
-    diagonal = sigmoid(tx.dot(w)) * (np.ones(N)-sigmoid(tx.dot(w)))
+    diagonal = sigmoid(tx.dot(w)) * (np.ones(N) - sigmoid(tx.dot(w)))
     s = np.diag(diagonal)
-    return np.dot(tx.T, np.dot(s, tx))  # theoretically this needs to be multiplied by 1/N
+    return np.dot(
+        tx.T, np.dot(s, tx)
+    )  # theoretically this needs to be multiplied by 1/N
+    """N = len(tx)
+    diagonal = sigmoid(tx.dot(w)) * (np.ones(N) - sigmoid(tx.dot(w)))
+    S_special = np.tile(diagonal, (len(tx[0]),1))
+    return np.dot(tx.T * S_special, tx)"""
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     ### load project data ###
     output, features, ids = load_csv_data_logistic("train.csv", sub_sample=False)
     y = output
-    #features = preproces(features)
-    #tx = build_model_data(features)
-    #print(tx.shape)
+    # features = preproces(features)
+    # tx = build_model_data(features)
+    # print(tx.shape)
     tx = build_model_data(standardize(features)[0])
     # split labeled data into 80% training data and 20% test data
     y_test = y[200000:]
@@ -74,14 +85,42 @@ if __name__ == '__main__':
     tx = tx[:200000]
 
     ### define the hyperparameters for logistic regression ###
-    nb_of_parameters = len(tx[0]) # should be 31 normally, 30 features + 1 bias term
-    initial_weights = np.array([0.46756248, 0.82084076, 0.13473604, 0.06748474, 0.08071737,
-                                0.89997862, 0.99040634, 0.88295851, 0.56703793, 0.25140082,
-                                0.81367198, 0.48045343, 0.26640933, 0.90796936, 0.48122395,
-                                0.77356115, 0.55607271, 0.96981431, 0.29737622, 0.90175285,
-                                0.02513868, 0.08031006, 0.5847512 , 0.13558202, 0.35724844,
-                                0.79922558, 0.40078367, 0.20064134, 0.22376159, 0.64714853,
-                                0.63752236])
+    nb_of_parameters = len(tx[0])  # should be 31 normally, 30 features + 1 bias term
+    initial_weights = np.array(
+        [
+            0.46756248,
+            0.82084076,
+            0.13473604,
+            0.06748474,
+            0.08071737,
+            0.89997862,
+            0.99040634,
+            0.88295851,
+            0.56703793,
+            0.25140082,
+            0.81367198,
+            0.48045343,
+            0.26640933,
+            0.90796936,
+            0.48122395,
+            0.77356115,
+            0.55607271,
+            0.96981431,
+            0.29737622,
+            0.90175285,
+            0.02513868,
+            0.08031006,
+            0.5847512,
+            0.13558202,
+            0.35724844,
+            0.79922558,
+            0.40078367,
+            0.20064134,
+            0.22376159,
+            0.64714853,
+            0.63752236,
+        ]
+    )
     max_iters = 10
     gamma = 0.001
     batch_size = 1024
@@ -106,7 +145,9 @@ if __name__ == '__main__':
         # update w by matrix product of inverse Hessian and gradient
         # because hessian wasn't multiplied with 1/batch size (for practical reasons), the inverse Hessian is
         # actually 1/batch_size * inverse Hessian, therefore we need to multiply it with batch_size to get the actual inverse Hessian
-        w = w - (gamma * batch_size * np.dot(np.linalg.inv(stochastic_hessian), gradient))
+        w = w - (
+            gamma * batch_size * np.dot(np.linalg.inv(stochastic_hessian), gradient)
+        )
     # compute log loss
     loss = compute_log_loss(y, tx, w)
     print("final training loss: ", loss)
@@ -126,6 +167,5 @@ if __name__ == '__main__':
     predictions[predictions >= 0.5] = 1
 
     ### make submission csv ###
-    #create_csv_submission(test_ids, predictions, "logistic_regression_2.csv")
-    #print("csv file made")
-
+    # create_csv_submission(test_ids, predictions, "logistic_regression_2.csv")
+    # print("csv file made")
