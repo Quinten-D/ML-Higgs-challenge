@@ -12,6 +12,15 @@ def train_model_least_squares(yb, tx):
     return least_squares(yb, tx)
 
 
+def accuracy_mse(y, tx, w):
+    predictions = np.dot(tx, w)
+    predictions[predictions < 0.5] = 0
+    predictions[predictions >= 0.5] = 1
+    difference = y - predictions
+    mistakes = np.count_nonzero(difference)
+    return (len(y) - mistakes) / len(y)
+
+
 def train_model_logistic_regression(yb, tx):
     """
     Trains the model using Newton's method with a stochastic Hessian matrix
@@ -57,7 +66,7 @@ def train_model_logistic_regression(yb, tx):
     initial_weights = initial_weights[: tx.shape[1]]
 
     max_iters = 5000
-    gamma = 0.01
+    gamma = 0.005
 
     return logistic_regression(yb, tx, initial_weights, max_iters, gamma)
 
@@ -126,9 +135,7 @@ def train_model_hessian_logistic_regression(yb, tx, gamma, batch_size):
         # update w by matrix product of inverse Hessian and gradient
         # because hessian wasn't multiplied with 1/batch size (for practical reasons), the inverse Hessian is
         # actually 1/batch_size * inverse Hessian, therefore we need to multiply it with batch_size to get the actual inverse Hessian
-        w = w - (
-            gamma * batch_size * np.dot(np.linalg.inv(stochastic_hessian), gradient)
-        )
+        w = w - (gamma * batch_size * np.dot(np.linalg.pinv(stochastic_hessian), gradient))
     # compute log loss
     loss = compute_log_loss(yb, tx, w)
 
@@ -167,9 +174,10 @@ def train_model():
         print("Start Training")
         print(yb.shape, tx.shape, yb_test.shape, tx_test.shape)
         w, loss = train_model_hessian_logistic_regression(
-            yb, tx, gamma=0.0005, batch_size=612
+            yb, tx, gamma=0.01, batch_size=128
         )
-        # w, loss = train_model_logistic_regression(yb, tx)
+        #w, loss = train_model_logistic_regression(yb, tx)
+        #w, loss = least_squares(yb, tx)
 
         # test trained model on test data
         test_loss = compute_log_loss(yb_test, tx_test, w)
@@ -218,8 +226,9 @@ def runModel():
         ids.append(id_prediction_pairs[j][0])
         predictions.append(id_prediction_pairs[j][1])
 
-    create_csv_submission(ids, predictions, "out2.txt")
+    create_csv_submission(ids, predictions, "preprocess_hessian.txt")
 
 
 if __name__ == "__main__":
-    train_model()
+    #train_model()
+    runModel()
