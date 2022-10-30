@@ -8,11 +8,12 @@ def preprocess_train_data(input_data):
     ii) Replaces -999 with the mean of non -999 values
     ii) Standardizes the data
 
-    Returns the standardized data, the removed features and the means
+    Returns the standardized data, the removed features, the means and stds
     """
     processed_data = []
     removed_features = {}
     means = []
+    stds = []
 
     num_samples = input_data.shape[0]
     for i in range(input_data.shape[1]):
@@ -25,18 +26,19 @@ def preprocess_train_data(input_data):
             continue
 
         # Replace missing entries with the mean of available entries then standardize
-        curMean = np.mean(cur_feature[cur_feature != -999])
-        means.append(curMean)
-        cur_feature[cur_feature == -999] = curMean
+        cur_feature[cur_feature == -999] = np.mean(cur_feature[cur_feature != -999])
+
+        means.append(np.mean(cur_feature))
+        stds.append(np.std(cur_feature))
 
         standardize(cur_feature)
 
         processed_data.append(cur_feature)
 
-    return np.array(processed_data).T, removed_features, means
+    return np.array(processed_data).T, removed_features, means, stds
 
 
-def preprocess_test_data(input_data, removed_features, means):
+def preprocess_test_data(input_data, removed_features, means, stds):
     """
     Does 3 things:
     i) Removes unwanted features
@@ -57,7 +59,8 @@ def preprocess_test_data(input_data, removed_features, means):
 
         # Replace missing entries with the mean of available entries then standardize
         cur_feature[cur_feature == -999] = means[realI]
-        standardize(cur_feature)
+        cur_feature -= means[realI]
+        cur_feature /= stds[realI]
         realI += 1
 
         processed_data.append(cur_feature)
@@ -107,19 +110,20 @@ def load_training_data(using_logistic_regression=False):
     input_data1 = np.array(input_data1)
     input_data23 = np.array(input_data23)
 
-    processed_data0, removed_features0, means0 = preprocess_train_data(input_data0)
-    processed_data1, removed_features1, means1 = preprocess_train_data(input_data1)
-    processed_data23, removed_features23, means23 = preprocess_train_data(input_data23)
+    processed_data0, removed_features0, means0, stds0 = preprocess_train_data(input_data0)
+    processed_data1, removed_features1, means1, stds1 = preprocess_train_data(input_data1)
+    processed_data23, removed_features23, means23, stds23 = preprocess_train_data(input_data23)
 
-    return (yb0, processed_data0, removed_features0, means0), \
-           (yb1, processed_data1, removed_features1, means1), \
-           (yb23, processed_data23, removed_features23, means23)
+    return (yb0, processed_data0, removed_features0, means0, stds0), \
+           (yb1, processed_data1, removed_features1, means1, stds1), \
+           (yb23, processed_data23, removed_features23, means23, stds23)
 
-def load_test_data(all_removed_features, all_means):
+def load_test_data(all_removed_features, all_means, all_stds):
     """
     Args:
         all_removed_features: 3 sets of removed features, one for each data subset
-        all_means: 3 means, one for each data subset
+        all_means: 3 vectors of means, one for each data subset
+        all_stds: 3 vectors of stds, one for each data subset
 
     Separates the test data into 3 subsets according to PRI_jet_num as for the training
     Process each subset separately
@@ -153,7 +157,7 @@ def load_test_data(all_removed_features, all_means):
 
     idx = 0
     for cur_input_data in [input_data0, input_data1, input_data23]:
-        all_processed_data.append(preprocess_test_data(cur_input_data, all_removed_features[idx], all_means[idx]))
+        all_processed_data.append(preprocess_test_data(cur_input_data, all_removed_features[idx], all_means[idx], all_stds[idx]))
         idx += 1
 
     return all_processed_data, [ids0, ids1, ids23]
@@ -170,26 +174,3 @@ def check_missing_values():
         if numMissing > 0:
             print(numMissing, end=": ")
             print(input_data[i][22])
-
-
-def plot_feature_output_relation():
-    """
-    Shows for each feature x potential relation between x and y
-    """
-    y, features, removed_features, means = load_training_data()
-    for i in range(20):
-        plt.plot(features[:, i], y)
-        plt.show()
-
-
-def plot_feature_histogram():
-    """
-    Shows the most frequent values of each feature
-    """
-
-    y, features, removed_features, means = load_training_data()
-
-    features = np.sort(features, axis=0)
-    for i in range(20):
-        plt.hist(features[:, i])
-        plt.show()
