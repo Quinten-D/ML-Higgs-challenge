@@ -1,6 +1,7 @@
 from utils import *
 from implementations import *
-from hessian_logistic_regression import *
+from hessian_logistic_regression import accuracy, compute_Hessian
+
 
 def train_model_least_squares(yb, tx):
     """
@@ -80,9 +81,9 @@ def train_model():
     the trained weights, the features that were not deemed useful, the mean of the kept features
     """
 
-    (yb0, processed_data0, removed_features0, means0), \
-    (yb1, processed_data1, removed_features1, means1), \
-    (yb23, processed_data23, removed_features23, means23) = load_training_data(using_logistic_regression=True)
+    (yb0, processed_data0, removed_features0, means0, stds0), \
+    (yb1, processed_data1, removed_features1, means1, stds1), \
+    (yb23, processed_data23, removed_features23, means23, stds23) = load_training_data(using_logistic_regression=True)
 
     all_w = []
     all_removed_features = []
@@ -100,8 +101,8 @@ def train_model():
         w, loss = train_model_hessian_logistic_regression(yb_test, tx)
 
         # test trained model on test data
-        test_loss = compute_log_loss(y_test, tx_test, w)
-        acc = accuracy(y_test, tx_test, w)
+        test_loss = compute_log_loss(yb_test, tx_test, w)
+        acc = accuracy(yb_test, tx_test, w)
         print("final train loss: ", loss)
         print("final test loss: ", test_loss)
         print("accuracy on test data: ", acc)
