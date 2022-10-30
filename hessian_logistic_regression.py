@@ -57,10 +57,6 @@ def compute_Hessian(tx, w):
     diagonal = sigmoid(tx.dot(w)) * (np.ones(N)-sigmoid(tx.dot(w)))
     s = np.diag(diagonal)
     return np.dot(tx.T, np.dot(s, tx))  # theoretically this needs to be multiplied by 1/N
-    """N = len(tx)
-    diagonal = sigmoid(tx.dot(w)) * (np.ones(N) - sigmoid(tx.dot(w)))
-    S_special = np.tile(diagonal, (len(tx[0]),1))
-    return np.dot(tx.T * S_special, tx)"""
 
 
 if __name__ == '__main__':

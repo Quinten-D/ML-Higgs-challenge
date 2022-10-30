@@ -31,6 +31,40 @@ def train_model_logistic_regression(yb, tx):
 
     return logistic_regression(yb, tx, initial_weights, max_iters, gamma)
 
+def train_Hessian(tx, y):
+    def compute_Hessian(tx, w):
+        N = len(tx)
+        # compute diagonal matrix S
+        diagonal = sigmoid(tx.dot(w)) * (np.ones(N) - sigmoid(tx.dot(w)))
+        s = np.diag(diagonal)
+        return np.dot(tx.T, np.dot(s, tx))  # theoretically this needs to be multiplied by 1/N
+
+    initial_weights = np.array([0.46756248, 0.82084076, 0.13473604, 0.06748474, 0.08071737,
+                                0.89997862, 0.99040634, 0.88295851, 0.56703793, 0.25140082,
+                                0.81367198, 0.48045343, 0.26640933, 0.90796936, 0.48122395,
+                                0.77356115, 0.55607271, 0.96981431, 0.29737622, 0.90175285,
+                                0.02513868, 0.08031006, 0.5847512, 0.13558202, 0.35724844,
+                                0.79922558, 0.40078367, 0.20064134, 0.22376159, 0.64714853,
+                                0.63752236])
+
+    initial_weights = initial_weights[:tx.shape[1]]
+
+    max_iters = 500
+    gamma = 0.001
+    batch_size = 128
+    w = initial_weights
+    N = len(y)
+    print("START TRAINING")
+    for n_iter in range(max_iters):
+        data_points = np.random.randint(0, N, size=batch_size)
+        x_batch = tx[data_points]
+        y_batch = y[data_points]
+        gradient = compute_gradient_log_loss(y, tx, w)
+        stochastic_hessian = compute_Hessian(x_batch, w)
+        w = w - (gamma * batch_size * np.dot(np.linalg.pinv(stochastic_hessian), gradient))
+
+    return w, -1
+
 def train_model():
     """
     Trains the model on 3 subsets of the data
@@ -40,7 +74,7 @@ def train_model():
 
     (yb0, processed_data0, removed_features0, means0, stds0), \
     (yb1, processed_data1, removed_features1, means1, stds1), \
-    (yb23, processed_data23, removed_features23, means23, stds23) = load_training_data(using_logistic_regression=False)
+    (yb23, processed_data23, removed_features23, means23, stds23) = load_training_data(using_logistic_regression=True)
 
     all_w = []
     all_removed_features = []
@@ -50,7 +84,8 @@ def train_model():
                                                           (yb1, processed_data1, removed_features1, means1, stds1),
                                                           (yb23, processed_data23, removed_features23, means23, stds23)]:
         tx = build_model_data(processed_data)
-        w, loss = train_model_least_squares(yb, tx)
+        #w, loss = train_model_least_squares(yb, tx)
+        w, loss = train_Hessian(tx, yb)
 
         all_w.append(w)
         all_removed_features.append(removed_features)
@@ -76,9 +111,13 @@ def runModel():
 
         tx = build_model_data(processed_data)
 
-        predictions = tx.dot(w)
-        predictions[predictions < 0] = -1
-        predictions[predictions >= 0] = 1
+        predictions = sigmoid(tx.dot(w))
+        predictions[predictions < 0.5] = -1
+        predictions[predictions >= 0.5] = 1
+
+#        predictions = tx.dot(w)
+#        predictions[predictions < 0] = -1
+#        predictions[predictions >= 0] = 1
 
         for j in range(len(ids)):
             id_prediction_pairs.append((ids[j], predictions[j]))
