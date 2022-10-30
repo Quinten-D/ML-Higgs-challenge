@@ -53,14 +53,15 @@ if __name__ == '__main__':
                                 0.02513868, 0.08031006, 0.5847512 , 0.13558202, 0.35724844,
                                 0.79922558, 0.40078367, 0.20064134, 0.22376159, 0.64714853,
                                 0.63752236])
-    max_iters = 10
-    gamma = 0.0005
+    max_iters = 500
+    gamma = 0.001
 
     ### train the model, take the average of its test loss ###
     average_test_loss_list = np.zeros(int(max_iters/10)+1)
-    for i in range(100):
+    nb_of_samples = 1
+    for i in range(1):
         print("Iteration: ", i+1)
         average_test_loss_list += np.array(train_model(y, tx, y_test, tx_test, initial_weights, max_iters, gamma))
-    average_test_loss_list /= 100
+    average_test_loss_list /= nb_of_samples
     print("AVERAGE TEST LOSS LIST GRADIENT: ", average_test_loss_list)
 
