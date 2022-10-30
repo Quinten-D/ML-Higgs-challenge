@@ -27,12 +27,12 @@ def train_model_logistic_regression(yb, tx):
 
     initial_weights = initial_weights[:tx.shape[1]]
 
-    max_iters = 100
-    gamma = 0.1
+    max_iters = 5000
+    gamma = 0.01
 
     return logistic_regression(yb, tx, initial_weights, max_iters, gamma)
 
-def train_model_hessian_logistic_regression(yb, tx):
+def train_model_hessian_logistic_regression(yb, tx, gamma, batch_size):
     """
     Trains the model using Newton's method with a stochastic Hessian matrix
     Returns the trained weights, log loss
@@ -48,9 +48,9 @@ def train_model_hessian_logistic_regression(yb, tx):
 
     initial_weights = initial_weights[:tx.shape[1]]
 
-    max_iters = 100
-    gamma = 0.01
-    batch_size = 612
+    max_iters = 2000
+    #gamma = 0.01
+    #batch_size = 612
 
     # train the model
     w = initial_weights
@@ -93,12 +93,16 @@ def train_model():
                                                           (yb23, processed_data23, removed_features23, means23)]:
         tx = build_model_data(processed_data)
         # split into train and test data
-        yb_test = yb[200000:]
-        yb = yb[:200000]
-        tx_test = tx[200000:]
-        tx = tx[:200000]
+        index = 4*len(yb)//5
+        yb_test = yb[index:]
+        yb = yb[:index]
+        tx_test = tx[index:]
+        tx = tx[:index]
         # train
-        w, loss = train_model_hessian_logistic_regression(yb_test, tx)
+        print("Start Training")
+        print(yb.shape, tx.shape, yb_test.shape, tx_test.shape)
+        w, loss = train_model_hessian_logistic_regression(yb, tx, gamma=.0005, batch_size=612)
+        #w, loss = train_model_logistic_regression(yb, tx)
 
         # test trained model on test data
         test_loss = compute_log_loss(yb_test, tx_test, w)
