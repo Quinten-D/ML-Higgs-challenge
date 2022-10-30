@@ -5,7 +5,7 @@ from hessian_logistic_regression import *
 
 
 ### handy functions ###
-def train_stochastic_hessian_model(y, tx, y_test, tx_test, initial_weights, max_iters, gamma, batch_size):
+def train_model(y, tx, y_test, tx_test, initial_weights, max_iters, gamma):
     test_loss_list = []
     ### train the model ###
     w = initial_weights
@@ -16,20 +16,8 @@ def train_stochastic_hessian_model(y, tx, y_test, tx_test, initial_weights, max_
         if n_iter % 10 == 0:
             loss = compute_log_loss(y_test, tx_test, w)
             test_loss_list.append(loss)
-        #print("test loss: ", loss, "\n")
-        # choose batch_size data points
-        data_points = np.random.randint(0, N, size=batch_size)
-        # pick out the datapoints
-        x_batch = tx[data_points]
-        y_batch = y[data_points]
-        # compute gradient
         gradient = compute_gradient_log_loss(y, tx, w)
-        # compute stochastic Hessian
-        stochastic_hessian = compute_Hessian(x_batch, w)
-        # update w by matrix product of inverse Hessian and gradient
-        # because hessian wasn't multiplied with 1/batch size (for practical reasons), the inverse Hessian is
-        # actually 1/batch_size * inverse Hessian, therefore we need to multiply it with batch_size to get the actual inverse Hessian
-        w = w - (gamma * batch_size * np.dot(np.linalg.inv(stochastic_hessian), gradient))
+        w = w - (gamma * gradient)
     # compute log loss
     loss = compute_log_loss(y, tx, w)
     print("final training loss: ", loss)
@@ -38,7 +26,7 @@ def train_stochastic_hessian_model(y, tx, y_test, tx_test, initial_weights, max_
     test_loss_list.append(final_test_loss)
     acc = accuracy(y_test, tx_test, w)
     print("accuracy on test data: ", acc)
-    print("test loss list HESSIAN: ", test_loss_list, "\n")
+    print("test loss list GRADIENT: ", test_loss_list, "\n")
     return test_loss_list
 
 
@@ -67,13 +55,12 @@ if __name__ == '__main__':
                                 0.63752236])
     max_iters = 10
     gamma = 0.0005
-    batch_size = 128
 
     ### train the model, take the average of its test loss ###
     average_test_loss_list = np.zeros(int(max_iters/10)+1)
     for i in range(100):
-        print("Iteration: ", i + 1)
-        average_test_loss_list += np.array(train_stochastic_hessian_model(y, tx, y_test, tx_test, initial_weights, max_iters, gamma, batch_size))
+        print("Iteration: ", i+1)
+        average_test_loss_list += np.array(train_model(y, tx, y_test, tx_test, initial_weights, max_iters, gamma))
     average_test_loss_list /= 100
-    print("AVERAGE TEST LOSS LIST HESSIAN BATCH SIZE ", batch_size, ": ", average_test_loss_list)
+    print("AVERAGE TEST LOSS LIST GRADIENT: ", average_test_loss_list)
 
