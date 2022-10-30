@@ -3,7 +3,7 @@ from helpers_higgs import *
 #from helpers import *
 
 
-### handy functions ###
+### handy functions
 def load_csv_data_logistic(data_path, sub_sample=False):
     """Loads data and returns y (class labels), tX (features) and ids (event ids)"""
     y = np.genfromtxt(data_path, delimiter=",", skip_header=1, dtype=str, usecols=1)
@@ -51,13 +51,6 @@ def accuracy(y, tx, w):
     mistakes = np.count_nonzero(difference)
     return (len(y)-mistakes)/len(y)
 
-def compute_Hessian(tx, w):
-    N = len(tx)
-    # compute diagonal matrix S
-    diagonal = sigmoid(tx.dot(w)) * (np.ones(N)-sigmoid(tx.dot(w)))
-    s = np.diag(diagonal)
-    return np.dot(tx.T, np.dot(s, tx))  # theoretically this needs to be multiplied by 1/N
-
 
 if __name__ == '__main__':
     ### load project data ###
@@ -84,39 +77,16 @@ if __name__ == '__main__':
                                 0.63752236])
     max_iters = 10
     gamma = 0.001
-    batch_size = 128
 
     ### train the model ###
-    w = initial_weights
-    N = len(y)
-    print("START TRAINING")
-    for n_iter in range(max_iters):
-        print("iteration:  ", n_iter)
-        loss = compute_log_loss(y_test, tx_test, w)
-        print("test loss: ", loss, "\n")
-        # choose batch_size data points
-        data_points = np.random.randint(0, N, size=batch_size)
-        # pick out the datapoints
-        x_batch = tx[data_points]
-        y_batch = y[data_points]
-        # compute gradient
-        gradient = compute_gradient_log_loss(y, tx, w)
-        # compute stochastic Hessian
-        stochastic_hessian = compute_Hessian(x_batch, w)
-        # update w by matrix product of inverse Hessian and gradient
-        # because hessian wasn't multiplied with 1/batch size (for practical reasons), the inverse Hessian is
-        # actually 1/batch_size * inverse Hessian, therefore we need to multiply it with batch_size to get the actual inverse Hessian
-        w = w - (gamma * batch_size * np.dot(np.linalg.inv(stochastic_hessian), gradient))
-    # compute log loss
-    loss = compute_log_loss(y, tx, w)
-    print("final training loss: ", loss)
+    w, loss = logistic_regression(y, tx, initial_weights, max_iters, gamma)
+    print("training loss: ", loss)
 
     ### test the model ###
     test_loss = compute_log_loss(y_test, tx_test, w)
     accuracy = accuracy(y_test, tx_test, w)
-    print("final test loss: ", test_loss)
+    print("test loss: ", test_loss)
     print("accuracy on test data: ", accuracy)
-    print("final weights: ", w, "\n")
 
     ### load the official test data ###
     test_features, _, test_ids = load_test_data()

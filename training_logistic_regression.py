@@ -76,7 +76,7 @@ if __name__ == '__main__':
                                 0.79922558, 0.40078367, 0.20064134, 0.22376159, 0.64714853,
                                 0.63752236])
     max_iters = 100
-    gamma = 0.1
+    gamma = 0.001
 
     ### train the model ###
     w, loss = logistic_regression(y, tx, initial_weights, max_iters, gamma)
@@ -90,7 +90,7 @@ if __name__ == '__main__':
 
     ### load the official test data ###
     test_features, _, test_ids = load_test_data()
-    tx = build_model_data(test_features)
+    tx = build_model_data(standardize(test_features)[0])
     predictions = sigmoid(tx.dot(w))
     predictions[predictions < 0.5] = -1
     predictions[predictions >= 0.5] = 1
