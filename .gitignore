@@ -8,3 +8,5 @@ Data/
 /test.csv
 /train.csv
 /logistic_regression_hessian.csv
+/preprocess_hessian.txt
+/preprocess_hessian_final.txt
