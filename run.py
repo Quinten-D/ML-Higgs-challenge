@@ -89,8 +89,8 @@ def train_Hessian(y, tx):
     initial_weights = initial_weights[:tx.shape[1]]
 
     max_iters = 2000
-    gamma = 0.005
-    batch_size = 612
+    gamma = 0.01
+    batch_size = 128
     w = initial_weights
     N = len(y)
     print("START TRAINING")
@@ -135,7 +135,6 @@ def train_model():
         tx_test = tx[index:]
         tx = tx[:index]
         # train
-        print("Start Training")
         w, loss = train_Hessian(yb, tx)
         # test trained model on test data
         test_loss = compute_log_loss(yb_test, tx_test, w)

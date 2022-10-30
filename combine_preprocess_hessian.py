@@ -116,8 +116,6 @@ def train_model_hessian_logistic_regression(yb, tx, gamma, batch_size):
     initial_weights = initial_weights[: tx.shape[1]]
 
     max_iters = 2000
-    # gamma = 0.01
-    # batch_size = 612
 
     # train the model
     w = initial_weights
