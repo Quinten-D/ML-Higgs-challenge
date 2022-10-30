@@ -85,7 +85,7 @@ def train_Hessian(tx, y):
     batch_size = 128
     w = initial_weights
     N = len(y)
-    print("START TRAINING")
+
     for n_iter in range(max_iters):
         data_points = np.random.randint(0, N, size=batch_size)
         x_batch = tx[data_points]

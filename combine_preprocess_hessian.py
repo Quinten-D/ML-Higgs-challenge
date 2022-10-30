@@ -127,7 +127,7 @@ def train_model_hessian_logistic_regression(yb, tx, gamma, batch_size):
         # because hessian wasn't multiplied with 1/batch size (for practical reasons), the inverse Hessian is
         # actually 1/batch_size * inverse Hessian, therefore we need to multiply it with batch_size to get the actual inverse Hessian
         w = w - (
-            gamma * batch_size * np.dot(np.linalg.inv(stochastic_hessian), gradient)
+            gamma * batch_size * np.dot(np.linalg.pinv(stochastic_hessian), gradient)
         )
     # compute log loss
     loss = compute_log_loss(yb, tx, w)
