@@ -4,6 +4,14 @@ from implementations import *
 from tuned_logistic import *
 
 
+def accuracy(y, tx, w):
+    predictions = sigmoid(np.dot(tx, w))
+    predictions[predictions < 0.5] = 0
+    predictions[predictions >= 0.5] = 1
+    difference = y - predictions
+    mistakes = np.count_nonzero(difference)
+    return (len(y) - mistakes) / len(y)
+
 def train_model_least_squares(yb, tx):
     """
     Trains the model using Least Squares
@@ -62,7 +70,7 @@ def train_model_logistic_regression(yb, tx):
 
     return logistic_regression(yb, tx, initial_weights, max_iters, gamma)
 
-def train_Hessian(tx, y):
+def train_Hessian(y, tx):
     def compute_Hessian(tx, w):
         N = len(tx)
         # compute diagonal matrix S
@@ -80,8 +88,8 @@ def train_Hessian(tx, y):
 
     initial_weights = initial_weights[:tx.shape[1]]
 
-    max_iters = 500
-    gamma = 0.001
+    max_iters = 2000
+    gamma = 0.01
     batch_size = 128
     w = initial_weights
     N = len(y)
@@ -94,7 +102,7 @@ def train_Hessian(tx, y):
         stochastic_hessian = compute_Hessian(x_batch, w)
         w = w - (gamma * batch_size * np.dot(np.linalg.pinv(stochastic_hessian), gradient))
 
-    return w, -1
+    return w, compute_log_loss(y, tx, w)
 
 def train_model():
     """
@@ -107,7 +115,7 @@ def train_model():
         (yb0, processed_data0, removed_features0, means0, stds0),
         (yb1, processed_data1, removed_features1, means1, stds1),
         (yb23, processed_data23, removed_features23, means23, stds23),
-    ) = load_training_data(using_logistic_regression=False)
+    ) = load_training_data(using_logistic_regression=True)
 
     all_w = []
     all_removed_features = []
@@ -119,8 +127,22 @@ def train_model():
         (yb23, processed_data23, removed_features23, means23, stds23),
     ]:
         tx = build_model_data(processed_data)
-        #w, loss = train_model_least_squares(yb, tx)
-        w, loss = train_Hessian(tx, yb)
+
+        # split into train and test data
+        index = 4 * len(yb) // 5
+        yb_test = yb[index:]
+        yb = yb[:index]
+        tx_test = tx[index:]
+        tx = tx[:index]
+        # train
+        w, loss = train_Hessian(yb, tx)
+        # test trained model on test data
+        test_loss = compute_log_loss(yb_test, tx_test, w)
+        acc = accuracy(yb_test, tx_test, w)
+        print("final train loss: ", loss)
+        print("final test loss: ", test_loss)
+        print("accuracy on test data: ", acc)
+        print("final weights: ", w, "\n")
 
         all_w.append(w)
         all_removed_features.append(removed_features)
@@ -168,7 +190,7 @@ def runModel():
         ids.append(id_prediction_pairs[j][0])
         predictions.append(id_prediction_pairs[j][1])
 
-    create_csv_submission(ids, predictions, "out.txt")
+    #create_csv_submission(ids, predictions, "preprocess_hessian.txt")
 
 
 runModel()
