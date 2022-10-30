@@ -84,7 +84,7 @@ if __name__ == '__main__':
                                 0.63752236])
     max_iters = 10
     gamma = 0.001
-    batch_size = 128
+    batch_size = 612
 
     ### train the model ###
     w = initial_weights
