@@ -128,13 +128,12 @@ def train_model():
     ]:
         tx = build_model_data(processed_data)
 
-        # split into train and test data
-   #     index = 4 * len(yb) // 5
-   #     yb_test = yb[index:]
-   #     yb = yb[:index]
-   #     tx_test = tx[index:]
-   #     tx = tx[:index]
-        # train
+        # add features
+        D = len(tx[0])
+        N = len(tx)
+        for feature_col in range(1, D):
+            tx = np.append(tx, (tx[:, feature_col].reshape((N, 1))) ** 2, axis=1)
+
         w, loss = train_Hessian(yb, tx)
         # test trained model on test data
    #     test_loss = compute_log_loss(yb_test, tx_test, w)
@@ -169,6 +168,12 @@ def runModel():
         w = all_w[i]
 
         tx = build_model_data(processed_data)
+
+        # add features
+        D = len(tx[0])
+        N = len(tx)
+        for feature_col in range(1, D):
+            tx = np.append(tx, (tx[:, feature_col].reshape((N, 1))) ** 2, axis=1)
 
         predictions = sigmoid(tx.dot(w))
         predictions[predictions < 0.5] = -1
