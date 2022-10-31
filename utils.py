@@ -1,7 +1,6 @@
 from helpers import *
 import matplotlib as plt
 
-
 def preprocess_train_data(input_data):
     """
     Does 3 things:
@@ -17,7 +16,8 @@ def preprocess_train_data(input_data):
     stds = []
 
     num_samples = input_data.shape[0]
-    for i in range(input_data.shape[1]):
+    D = input_data.shape[1]
+    for i in range(D):
         cur_feature = input_data[:, i]
 
         # Remove features with a lot of missing entries
@@ -32,8 +32,19 @@ def preprocess_train_data(input_data):
         means.append(np.mean(cur_feature))
         stds.append(np.std(cur_feature))
 
+        # Feature extension
+        input_data = np.append(input_data, (input_data[:, i].reshape((num_samples, 1))) ** 2, axis=1)
+
         standardize(cur_feature)
 
+        processed_data.append(cur_feature)
+
+    # Process extended features
+    for i in range(D, input_data.shape[1]):
+        cur_feature = input_data[:, i]
+        means.append(np.mean(cur_feature))
+        stds.append(np.std(cur_feature))
+        standardize(cur_feature)
         processed_data.append(cur_feature)
 
     return np.array(processed_data).T, removed_features, means, stds
@@ -52,6 +63,8 @@ def preprocess_test_data(input_data, removed_features, means, stds):
     processed_data = []
 
     realI = 0
+    num_samples = input_data.shape[0]
+    D = input_data.shape[1]
     for i in range(input_data.shape[1]):
         if i in removed_features:
             continue
@@ -60,6 +73,11 @@ def preprocess_test_data(input_data, removed_features, means, stds):
 
         # Replace missing entries with the mean of available entries then standardize
         cur_feature[cur_feature == -999] = means[realI]
+
+        # Feature extension
+        if i < D:
+            input_data = np.append(input_data, (input_data[:, i].reshape((num_samples, 1))) ** 2, axis=1)
+
         cur_feature -= means[realI]
         cur_feature /= stds[realI]
         realI += 1
@@ -68,13 +86,6 @@ def preprocess_test_data(input_data, removed_features, means, stds):
 
     return np.array(processed_data).T
 
-
-def add_features(input_data):
-    D = len(input_data[0])
-    N = len(input_data)
-    for feature_col in range(1, D):
-        input_data = np.append(input_data, (input_data[:, feature_col].reshape((N, 1))) ** 2, axis=1)
-    return input_data
 
 def load_training_data(using_logistic_regression=False):
     """
@@ -117,10 +128,6 @@ def load_training_data(using_logistic_regression=False):
     input_data0 = np.array(input_data0)
     input_data1 = np.array(input_data1)
     input_data23 = np.array(input_data23)
-
-    input_data0 = add_features(input_data0)
-    input_data1 = add_features(input_data1)
-    input_data23 = add_features(input_data23)
 
     processed_data0, removed_features0, means0, stds0 = preprocess_train_data(
         input_data0
@@ -173,10 +180,6 @@ def load_test_data(all_removed_features, all_means, all_stds):
     input_data0 = np.array(input_data0)
     input_data1 = np.array(input_data1)
     input_data23 = np.array(input_data23)
-
-    input_data0 = add_features(input_data0)
-    input_data1 = add_features(input_data1)
-    input_data23 = add_features(input_data23)
 
     all_processed_data = []
 
