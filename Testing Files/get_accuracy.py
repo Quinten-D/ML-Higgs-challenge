@@ -278,15 +278,15 @@ def get_accuracy():
         # train
         print("Start Training")
         print(yb.shape, tx.shape, yb_test.shape, tx_test.shape)
-        #w, loss = train_model_hessian_logistic_regression(yb, tx, gamma=0.01, batch_size=128)
-        w, loss = train_model_logistic_regression(yb, tx)
+        w, loss = train_model_hessian_logistic_regression(yb, tx, gamma=0.01, batch_size=128)
+        #w, loss = train_model_logistic_regression(yb, tx)
         #w, loss = least_squares(yb, tx)
         #w, loss = train_model_ridge_regression(yb, tx, 0.)
 
         # test trained model on test data
         test_loss = compute_log_loss(yb_test, tx_test, w)
-        #acc, m = accuracy_and_mistakes(yb_test, tx_test, w)
-        acc, m = accuracy_and_mistakes_random(yb_test)
+        acc, m = accuracy_and_mistakes(yb_test, tx_test, w)
+        #acc, m = accuracy_and_mistakes_random(yb_test)
         print("m ", m)
         total_mistakes += m
         print("final train loss: ", loss)

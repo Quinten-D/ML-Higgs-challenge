@@ -60,12 +60,43 @@ def train_model_logistic_regression(yb, tx):
             0.22376159,
             0.64714853,
             0.63752236,
+            0.46756248,
+            0.82084076,
+            0.13473604,
+            0.06748474,
+            0.08071737,
+            0.89997862,
+            0.99040634,
+            0.88295851,
+            0.56703793,
+            0.25140082,
+            0.81367198,
+            0.48045343,
+            0.26640933,
+            0.90796936,
+            0.48122395,
+            0.77356115,
+            0.55607271,
+            0.96981431,
+            0.29737622,
+            0.90175285,
+            0.02513868,
+            0.08031006,
+            0.5847512,
+            0.13558202,
+            0.35724844,
+            0.79922558,
+            0.40078367,
+            0.20064134,
+            0.22376159,
+            0.64714853,
+            0.63752236,
         ]
     )
 
     initial_weights = initial_weights[:tx.shape[1]]
 
-    max_iters = 100
+    max_iters = 300
     gamma = 0.1
 
     return logistic_regression(yb, tx, initial_weights, max_iters, gamma)
@@ -134,8 +165,22 @@ def train_model():
         for feature_col in range(1, D):
             tx = np.append(tx, (tx[:, feature_col].reshape((N, 1))) ** 2, axis=1)
 
-        w, loss = train_Hessian(yb, tx)
+        # split into train and test data
+        index = 4 * len(yb) // 5
+        yb_test = yb[index:]
+        yb = yb[:index]
+        tx_test = tx[index:]
+        tx = tx[:index]
+
+        w, loss = train_model_logistic_regression(yb, tx)
+
         # test trained model on test data
+        test_loss = compute_log_loss(yb_test, tx_test, w)
+        acc = accuracy(yb_test, tx_test, w)
+        print("final train loss: ", loss)
+        print("final test loss: ", test_loss)
+        print("accuracy on test data: ", acc)
+        print("final weights: ", w, "\n")
 
         all_w.append(w)
         all_removed_features.append(removed_features)
