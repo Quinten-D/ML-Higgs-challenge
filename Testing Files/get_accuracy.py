@@ -219,6 +219,10 @@ def train_model():
         (yb23, processed_data23, removed_features23, means23, stds23),
     ) = load_training_data(using_logistic_regression=True)
 
+    # 20% test data
+    nb_of_test_points = 4 * (len(yb0)+len(yb1)+len(yb23)) // 5
+    nb_of_test_point_1 =
+
     all_w = []
     all_removed_features = []
     all_means = []
@@ -229,11 +233,7 @@ def train_model():
         (yb23, processed_data23, removed_features23, means23, stds23),
     ]:
         tx = build_model_data(processed_data)
-        # add features
-        D = len(tx[0])
-        N = len(tx)
-        for feature_col in range(1, D):
-            tx = np.append(tx, (tx[:, feature_col].reshape((N, 1))) ** 2, axis=1)
+
         # split into train and test data
         index = 4 * len(yb) // 5
         yb_test = yb[index:]
@@ -261,6 +261,10 @@ def train_model():
         all_means.append(means)
         all_stds.append(stds)
 
+    # global accuracy
+
+
+
     return all_w, all_removed_features, all_means, all_stds
 
 
@@ -279,11 +283,6 @@ def runModel():
         w = all_w[i]
 
         tx = build_model_data(processed_data)
-        # add features
-        D = len(tx[0])
-        N = len(tx)
-        for feature_col in range(1, D):
-            tx = np.append(tx, (tx[:, feature_col].reshape((N, 1))) ** 2, axis=1)
 
         predictions = sigmoid(tx.dot(w))
         predictions[predictions < 0.5] = -1
