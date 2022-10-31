@@ -12,6 +12,10 @@ def train_model_least_squares(yb, tx):
     return least_squares(yb, tx)
 
 
+def train_model_ridge_regression(yb, tx, lambda_):
+    return ridge_regression(yb, tx, lambda_)
+
+
 def accuracy_mse(y, tx, w):
     predictions = np.dot(tx, w)
     predictions[predictions < 0.5] = 0
@@ -60,13 +64,44 @@ def train_model_logistic_regression(yb, tx):
             0.22376159,
             0.64714853,
             0.63752236,
+            0.46756248,
+            0.82084076,
+            0.13473604,
+            0.06748474,
+            0.08071737,
+            0.89997862,
+            0.99040634,
+            0.88295851,
+            0.56703793,
+            0.25140082,
+            0.81367198,
+            0.48045343,
+            0.26640933,
+            0.90796936,
+            0.48122395,
+            0.77356115,
+            0.55607271,
+            0.96981431,
+            0.29737622,
+            0.90175285,
+            0.02513868,
+            0.08031006,
+            0.5847512,
+            0.13558202,
+            0.35724844,
+            0.79922558,
+            0.40078367,
+            0.20064134,
+            0.22376159,
+            0.64714853,
+            0.63752236,
         ]
     )
 
     initial_weights = initial_weights[: tx.shape[1]]
 
-    max_iters = 5000
-    gamma = 0.005
+    max_iters = 300
+    gamma = 0.1
 
     return logistic_regression(yb, tx, initial_weights, max_iters, gamma)
 
@@ -110,12 +145,43 @@ def train_model_hessian_logistic_regression(yb, tx, gamma, batch_size):
             0.22376159,
             0.64714853,
             0.63752236,
+            0.46756248,
+            0.82084076,
+            0.13473604,
+            0.06748474,
+            0.08071737,
+            0.89997862,
+            0.99040634,
+            0.88295851,
+            0.56703793,
+            0.25140082,
+            0.81367198,
+            0.48045343,
+            0.26640933,
+            0.90796936,
+            0.48122395,
+            0.77356115,
+            0.55607271,
+            0.96981431,
+            0.29737622,
+            0.90175285,
+            0.02513868,
+            0.08031006,
+            0.5847512,
+            0.13558202,
+            0.35724844,
+            0.79922558,
+            0.40078367,
+            0.20064134,
+            0.22376159,
+            0.64714853,
+            0.63752236,
         ]
     )
 
     initial_weights = initial_weights[: tx.shape[1]]
 
-    max_iters = 2000
+    max_iters = 200
 
     # train the model
     w = initial_weights
@@ -163,6 +229,11 @@ def train_model():
         (yb23, processed_data23, removed_features23, means23, stds23),
     ]:
         tx = build_model_data(processed_data)
+        # add features
+        D = len(tx[0])
+        N = len(tx)
+        for feature_col in range(1, D):
+            tx = np.append(tx, (tx[:, feature_col].reshape((N, 1))) ** 2, axis=1)
         # split into train and test data
         index = 4 * len(yb) // 5
         yb_test = yb[index:]
@@ -172,11 +243,10 @@ def train_model():
         # train
         print("Start Training")
         print(yb.shape, tx.shape, yb_test.shape, tx_test.shape)
-        w, loss = train_model_hessian_logistic_regression(
-            yb, tx, gamma=0.01, batch_size=128
-        )
-        #w, loss = train_model_logistic_regression(yb, tx)
+        #w, loss = train_model_hessian_logistic_regression(yb, tx, gamma=0.001, batch_size=612)
+        w, loss = train_model_logistic_regression(yb, tx)
         #w, loss = least_squares(yb, tx)
+        #w, loss = train_model_ridge_regression(yb, tx, 0.)
 
         # test trained model on test data
         test_loss = compute_log_loss(yb_test, tx_test, w)
@@ -209,6 +279,11 @@ def runModel():
         w = all_w[i]
 
         tx = build_model_data(processed_data)
+        # add features
+        D = len(tx[0])
+        N = len(tx)
+        for feature_col in range(1, D):
+            tx = np.append(tx, (tx[:, feature_col].reshape((N, 1))) ** 2, axis=1)
 
         predictions = sigmoid(tx.dot(w))
         predictions[predictions < 0.5] = -1
@@ -226,9 +301,9 @@ def runModel():
         ids.append(id_prediction_pairs[j][0])
         predictions.append(id_prediction_pairs[j][1])
 
-    create_csv_submission(ids, predictions, "preprocess_hessian_final.txt")
+    create_csv_submission(ids, predictions, "feature_exp_GD.txt")
 
 
 if __name__ == "__main__":
-    #train_model()
-    runModel()
+    train_model()
+    #runModel()

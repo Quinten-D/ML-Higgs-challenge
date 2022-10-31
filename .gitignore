@@ -10,3 +10,4 @@ Data/
 /logistic_regression_hessian.csv
 /preprocess_hessian.txt
 /preprocess_hessian_final.txt
+/feature_exp_GD.txt
