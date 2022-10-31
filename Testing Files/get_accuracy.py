@@ -1,5 +1,4 @@
 import random
-
 from utils import *
 from implementations import *
 from hessian_logistic_regression import accuracy, compute_Hessian
@@ -216,9 +215,9 @@ def train_model_hessian_logistic_regression(yb, tx, gamma, batch_size):
     return w, loss
 
 
-def train_model():
+def get_accuracy():
     """
-    Trains the model on 3 subsets of the data
+    Trains the model on 3 subsets of the data, prints the accuracy on the test data
     Returns for each subset:
     the trained weights, the features that were not deemed useful, the mean of the kept features
     """
@@ -296,41 +295,7 @@ def train_model():
     return all_w, all_removed_features, all_means, all_stds
 
 
-def runModel():
-    """
-    Trains the model and then run it on a test set to predict the results
-    """
-
-    all_w, all_removed_features, all_means, all_stds = train_model()
-    all_processed_data, all_ids = load_test_data(all_removed_features, all_means, all_stds)
-
-    id_prediction_pairs = []
-    for i in range(3):
-        processed_data = all_processed_data[i]
-        ids = all_ids[i]
-        w = all_w[i]
-
-        tx = build_model_data(processed_data)
-
-        predictions = sigmoid(tx.dot(w))
-        predictions[predictions < 0.5] = -1
-        predictions[predictions >= 0.5] = 1
-
-        for j in range(len(ids)):
-            id_prediction_pairs.append((ids[j], predictions[j]))
-
-        print("Done with " + str(i))
-
-    id_prediction_pairs.sort()
-    ids = []
-    predictions = []
-    for j in range(len(id_prediction_pairs)):
-        ids.append(id_prediction_pairs[j][0])
-        predictions.append(id_prediction_pairs[j][1])
-
-    create_csv_submission(ids, predictions, "feature_exp_GD.txt")
-
 
 if __name__ == "__main__":
-    train_model()
+    get_accuracy()
     #runModel()
