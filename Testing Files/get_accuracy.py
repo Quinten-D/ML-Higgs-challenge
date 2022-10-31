@@ -1,3 +1,5 @@
+import random
+
 from utils import *
 from implementations import *
 from hessian_logistic_regression import accuracy, compute_Hessian
@@ -23,6 +25,15 @@ def accuracy_mse(y, tx, w):
     difference = y - predictions
     mistakes = np.count_nonzero(difference)
     return (len(y) - mistakes) / len(y)
+
+
+def accuracy_and_mistakes(y, tx, w):
+    predictions = sigmoid(np.dot(tx, w))
+    predictions[predictions < 0.5] = 0
+    predictions[predictions >= 0.5] = 1
+    difference = y - predictions
+    mistakes = np.count_nonzero(difference)
+    return (len(y) - mistakes) / len(y), mistakes
 
 
 def train_model_logistic_regression(yb, tx):
@@ -97,7 +108,6 @@ def train_model_logistic_regression(yb, tx):
             0.63752236,
         ]
     )
-
     initial_weights = initial_weights[: tx.shape[1]]
 
     max_iters = 300
@@ -220,26 +230,41 @@ def train_model():
     ) = load_training_data(using_logistic_regression=True)
 
     # 20% test data
-    nb_of_test_points = 4 * (len(yb0)+len(yb1)+len(yb23)) // 5
-    nb_of_test_point_1 =
+    nb_of_test_points = 1 * (len(yb0)+len(yb1)+len(yb23)) // 5
+    nb_of_test_point_0 = random.randint(0, nb_of_test_points)
+    nb_of_test_point_1 = random.randint(0, nb_of_test_points-nb_of_test_point_0)
+    nb_of_test_point_23 = nb_of_test_points - nb_of_test_point_0 - nb_of_test_point_1
+    nb_of_points = [nb_of_test_point_0, nb_of_test_point_1, nb_of_test_point_23]
+    print(nb_of_test_points)
+    print(nb_of_points)
+
 
     all_w = []
     all_removed_features = []
     all_means = []
     all_stds = []
+    counter = 0
+    total_mistakes = 0
     for (yb, processed_data, removed_features, means, stds) in [
         (yb0, processed_data0, removed_features0, means0, stds0),
         (yb1, processed_data1, removed_features1, means1, stds1),
         (yb23, processed_data23, removed_features23, means23, stds23),
     ]:
         tx = build_model_data(processed_data)
-
+        # add features
+        D = len(tx[0])
+        N = len(tx)
+        for feature_col in range(1, D):
+            tx = np.append(tx, (tx[:, feature_col].reshape((N, 1))) ** 2, axis=1)
         # split into train and test data
-        index = 4 * len(yb) // 5
-        yb_test = yb[index:]
-        yb = yb[:index]
-        tx_test = tx[index:]
-        tx = tx[:index]
+        #index = 4 * len(yb) // 5
+        index = nb_of_points[counter]
+        test_indices = random.sample(range(0, len(tx)), index)
+        counter += 1
+        yb_test = yb[test_indices]
+        yb = np.delete(yb, test_indices)
+        tx_test = tx[test_indices]
+        tx = np.delete(tx, test_indices, axis=0)
         # train
         print("Start Training")
         print(yb.shape, tx.shape, yb_test.shape, tx_test.shape)
@@ -250,7 +275,9 @@ def train_model():
 
         # test trained model on test data
         test_loss = compute_log_loss(yb_test, tx_test, w)
-        acc = accuracy(yb_test, tx_test, w)
+        acc, m = accuracy_and_mistakes(yb_test, tx_test, w)
+        print("m ", m)
+        total_mistakes += m
         print("final train loss: ", loss)
         print("final test loss: ", test_loss)
         print("accuracy on test data: ", acc)
@@ -262,7 +289,8 @@ def train_model():
         all_stds.append(stds)
 
     # global accuracy
-
+    global_accuracy = (nb_of_test_points-total_mistakes)/nb_of_test_points
+    print("global accuracy: ", global_accuracy)
 
 
     return all_w, all_removed_features, all_means, all_stds
