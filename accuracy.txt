@@ -1,0 +1,13 @@
+ACCURACY:
+
+Preprocessing + feature extension:
+    logistic regression with GD: 0.816 +- 0.015                     (step:0.1, iter:300)
+    logistic regression with GD and regularization: 0.794 +- 0.021  (step:0.1, iter:300, lambda:0.05)
+    linear regression with least squares: 0.778 +- 0.007
+
+Preprocessing:
+    logistic regression with stochastic Hessian: 0.767 +- 0.015     (step:0.01, batch:128, iter:200)
+    logistic regression with GD: 0.754 +- 0.026                     (step:0.1, iter:300)
+    linear regression with least squares: 0.753 +- 0.015
+
+Random guess: 0.667 +- 0.003

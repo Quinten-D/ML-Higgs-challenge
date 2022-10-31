@@ -28,10 +28,21 @@ def accuracy_mse(y, tx, w):
 
 def accuracy_and_mistakes(y, tx, w):
     predictions = sigmoid(np.dot(tx, w))
+    #predictions = np.dot(tx, w)
     predictions[predictions < 0.5] = 0
     predictions[predictions >= 0.5] = 1
     difference = y - predictions
     mistakes = np.count_nonzero(difference)
+    return (len(y) - mistakes) / len(y), mistakes
+
+
+def accuracy_and_mistakes_random(y):
+    mistakes = 0
+    for i in y:
+        guess = random.randint(0,2)
+        #guess = abs(1-guess)
+        if guess == i:
+            mistakes+=1
     return (len(y) - mistakes) / len(y), mistakes
 
 
@@ -267,14 +278,15 @@ def get_accuracy():
         # train
         print("Start Training")
         print(yb.shape, tx.shape, yb_test.shape, tx_test.shape)
-        #w, loss = train_model_hessian_logistic_regression(yb, tx, gamma=0.001, batch_size=612)
+        #w, loss = train_model_hessian_logistic_regression(yb, tx, gamma=0.01, batch_size=128)
         w, loss = train_model_logistic_regression(yb, tx)
         #w, loss = least_squares(yb, tx)
         #w, loss = train_model_ridge_regression(yb, tx, 0.)
 
         # test trained model on test data
         test_loss = compute_log_loss(yb_test, tx_test, w)
-        acc, m = accuracy_and_mistakes(yb_test, tx_test, w)
+        #acc, m = accuracy_and_mistakes(yb_test, tx_test, w)
+        acc, m = accuracy_and_mistakes_random(yb_test)
         print("m ", m)
         total_mistakes += m
         print("final train loss: ", loss)
