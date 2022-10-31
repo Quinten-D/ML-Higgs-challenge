@@ -136,12 +136,6 @@ def train_model():
 
         w, loss = train_Hessian(yb, tx)
         # test trained model on test data
-   #     test_loss = compute_log_loss(yb_test, tx_test, w)
-   #     acc = accuracy(yb_test, tx_test, w)
-        print("final train loss: ", loss)
-   #     print("final test loss: ", test_loss)
-   #     print("accuracy on test data: ", acc)
-        print("final weights: ", w, "\n")
 
         all_w.append(w)
         all_removed_features.append(removed_features)
