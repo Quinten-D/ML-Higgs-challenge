@@ -129,19 +129,19 @@ def train_model():
         tx = build_model_data(processed_data)
 
         # split into train and test data
-        index = 4 * len(yb) // 5
-        yb_test = yb[index:]
-        yb = yb[:index]
-        tx_test = tx[index:]
-        tx = tx[:index]
+   #     index = 4 * len(yb) // 5
+   #     yb_test = yb[index:]
+   #     yb = yb[:index]
+   #     tx_test = tx[index:]
+   #     tx = tx[:index]
         # train
         w, loss = train_Hessian(yb, tx)
         # test trained model on test data
-        test_loss = compute_log_loss(yb_test, tx_test, w)
-        acc = accuracy(yb_test, tx_test, w)
+   #     test_loss = compute_log_loss(yb_test, tx_test, w)
+   #     acc = accuracy(yb_test, tx_test, w)
         print("final train loss: ", loss)
-        print("final test loss: ", test_loss)
-        print("accuracy on test data: ", acc)
+   #     print("final test loss: ", test_loss)
+   #     print("accuracy on test data: ", acc)
         print("final weights: ", w, "\n")
 
         all_w.append(w)

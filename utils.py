@@ -69,6 +69,13 @@ def preprocess_test_data(input_data, removed_features, means, stds):
     return np.array(processed_data).T
 
 
+def add_features(input_data):
+    D = len(input_data[0])
+    N = len(input_data)
+    for feature_col in range(1, D):
+        input_data = np.append(input_data, (input_data[:, feature_col].reshape((N, 1))) ** 2, axis=1)
+    return input_data
+
 def load_training_data(using_logistic_regression=False):
     """
     Args:
@@ -110,6 +117,10 @@ def load_training_data(using_logistic_regression=False):
     input_data0 = np.array(input_data0)
     input_data1 = np.array(input_data1)
     input_data23 = np.array(input_data23)
+
+    input_data0 = add_features(input_data0)
+    input_data1 = add_features(input_data1)
+    input_data23 = add_features(input_data23)
 
     processed_data0, removed_features0, means0, stds0 = preprocess_train_data(
         input_data0
@@ -162,6 +173,10 @@ def load_test_data(all_removed_features, all_means, all_stds):
     input_data0 = np.array(input_data0)
     input_data1 = np.array(input_data1)
     input_data23 = np.array(input_data23)
+
+    input_data0 = add_features(input_data0)
+    input_data1 = add_features(input_data1)
+    input_data23 = add_features(input_data23)
 
     all_processed_data = []
 
