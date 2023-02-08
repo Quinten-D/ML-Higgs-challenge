@@ -1,5 +1,5 @@
-# Machine Learning - Project 1
-This repository contains the codes used to solve the ML Higgs challenge.
+# Machine Learning Higgs challenge
+This repository contains the code used to solve the ML Higgs challenge for the first project of EPFL's ML course. (full details: https://www.aicrowd.com/challenges/epfl-machine-learning-higgs)
 
 The files in the root directory contain the final codes used for the submission. The "Testing Files" directory contains scripts used to test multiple methods.
 
